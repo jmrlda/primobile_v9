@@ -277,7 +277,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
           encomendaItens.clear();
         }
 
-        // encomendaItens.clear();
+        if ( artigos != null ) {// encomendaItens.clear();
         artigos.forEach((a) {
           print('result form 1');
           print(a.descricao);
@@ -286,6 +286,8 @@ class _EncomendaPageState extends State<EncomendaPage> {
           totalVenda += subtotal;
           encomendaItens.add(artigoEncomenda(a));
         });
+
+        }
         setState(() {
           // items.[0]
           // items.clear();

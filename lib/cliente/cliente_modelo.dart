@@ -9,17 +9,18 @@ class Cliente {
 
 
   factory Cliente.fromMap(Map<String, dynamic> json) => new Cliente(
+
         cliente: json['cliente'],
         nome: json['nome'],
         numContrib: json['numContrib'],
-        endereco: json['endereco'],
+        endereco: new Endereco(descricao: json['endereco']),
       );
 
   Map<String, dynamic> toMap() => {
         'cliente': cliente,
         'nome': nome,
         'numContrib': numContrib,
-        'endereco': endereco.ruaAv,
+        'endereco': endereco.descricao,
       };
 
 
@@ -27,8 +28,8 @@ factory Cliente.fromJson(Map<String, dynamic> data) {
    return Cliente(
       cliente: data['cliente'],
       nome: data['nome'], 
-      numContrib : data['numContrib'],
-      endereco : data['endereco'],
+      numContrib : int.parse(data['numContrib']),
+      endereco : new Endereco(descricao: data['endereco']),
    );
 }
 
@@ -39,11 +40,6 @@ factory Cliente.fromJson(Map<String, dynamic> data) {
     
   }
 
-
-
-
-
-
 }
 
 
@@ -52,6 +48,6 @@ class Endereco {
   String provincia;
   String ruaAv;
   String bairro;
-
-  Endereco({this.pais, this.provincia, this.ruaAv, this.bairro});  
+  String descricao;
+  Endereco({this.pais, this.provincia, this.ruaAv, this.bairro, this.descricao});  
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:primobile/cliente/cliente_api_provider.dart';
 import 'package:primobile/menu/opcoes.dart';
 import 'package:primobile/artigo/artigo_api_provider.dart';
 
@@ -165,7 +166,10 @@ void opcaoAcao(String opcao) {
 }
 
 
-void _loadFromApi() {
+void _loadFromApi  () {
   var artigoApi = ArtigoApiProvider();
-  artigoApi.getTodosArtigos('');
+  var clienteApi = ClienteApiProvider();
+
+   artigoApi.getTodosArtigos();
+   clienteApi.getTodosClientes();
 }

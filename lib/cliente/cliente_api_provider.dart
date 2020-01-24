@@ -6,8 +6,8 @@ import 'cliente_modelo.dart';
 
 class ClienteApiProvider {
 
-Future<List<Cliente>> getTodosClientes(String  token) async {
-    var url = 'https://primobile.herokuapp.com/clientes';
+Future<List<Cliente>> getTodosClientes() async {
+    var url = 'https://f3409807.ngrok.io/api/cliente';
     Response response;
 
     try {

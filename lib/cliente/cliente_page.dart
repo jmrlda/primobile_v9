@@ -348,13 +348,13 @@ class _ClientePageState extends State<ClientePage> {
           // duplicateItems = artigos;
           // print('size');
           // print(artigos.length);
-          listaCliente.forEach((cliente) async {
-            print(cliente.cliente);
-            await DBProvider.db.insertCliente(cliente);
-            setState(() {
+          // listaCliente.forEach((cliente) async {
+          //   print(cliente.cliente);
+          //   await DBProvider.db.insertCliente(cliente);
+          //   setState(() {
 
-            });
-          });
+          //   });
+          // });
         },
       ),
     );

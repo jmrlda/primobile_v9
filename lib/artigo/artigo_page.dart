@@ -158,51 +158,52 @@ Widget listaArtigo() {
       if ((snap.connectionState == ConnectionState.none &&
               snap.hasData == null) ||
           snap.connectionState == ConnectionState.waiting) {
-        return CircularProgressIndicator();
+        return Container(
+          child: CircularProgressIndicator(),
+        );
       } else if (snap.connectionState == ConnectionState.done) {
         if (snap.hasError) {
           return Text('Erro: ${snap.error}');
-        } 
-          return ListView.builder(
-            itemCount: snap.data.length,
-            itemBuilder: (context, index) {
-              Artigo artigo = snap.data[index];
-              // artigo.fetchArtigos();
-              return Container(
-                child: _ListaTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.blue,
-                    // radius: 50.0,
-                    child: Icon(
-                      Icons.local_offer,
-                      color: Colors.white,
-                      // size: 50.0,
-                    ),
-                  ),
-                  title: Text(
-                    artigo.descricao,
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    artigo.artigo +
-                        ' ' +
-                        artigo.unidade +
-                        ', ' +
-                        artigo.preco.toString() +
-                        ' MT',
-                    style: TextStyle(color: Colors.blueAccent, fontSize: 16),
-                  ),
-                  data: artigo.descricao,
-                ),
-              );
-            },
-          );
         }
+        return ListView.builder(
+          itemCount: snap.data.length,
+          itemBuilder: (context, index) {
+            Artigo artigo = snap.data[index];
+            // artigo.fetchArtigos();
+            return Container(
+              child: _ListaTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.blue,
+                  // radius: 50.0,
+                  child: Icon(
+                    Icons.local_offer,
+                    color: Colors.white,
+                    // size: 50.0,
+                  ),
+                ),
+                title: Text(
+                  artigo.descricao,
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  artigo.artigo +
+                      ' ' +
+                      artigo.unidade +
+                      ', ' +
+                      artigo.preco.toString() +
+                      ' MT',
+                  style: TextStyle(color: Colors.blueAccent, fontSize: 16),
+                ),
+                data: artigo.descricao,
+              ),
+            );
+          },
+        );
+      }
       return Text('Ocorreu um erro desconhecido: ${snap.error}');
-
     },
   );
 }

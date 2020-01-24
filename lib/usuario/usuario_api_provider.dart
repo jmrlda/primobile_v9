@@ -7,7 +7,7 @@ import 'usuario_modelo.dart';
 class UsuarioApiProvider {
 
 Future<List<Usuario>> getTodosUsuario(String  token) async {
-    var url = 'https://primobile.herokuapp.com/usuarios';
+    var url = 'https://d0c11f9d.ngrok.io/api/usuario';
     Response response;
 
     try {

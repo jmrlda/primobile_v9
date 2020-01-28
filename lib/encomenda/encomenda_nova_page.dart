@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:primobile/artigo/artigo_modelo.dart';
+import 'package:primobile/artigo/artigo_selecionar_page.dart';
 // import 'package:numberpicker/numberpicker.dart';
 // import 'package:primobile/util.dart';
 
@@ -9,6 +10,7 @@ BuildContext contexto;
 class EncomendaPage extends StatefulWidget {
   EncomendaPage({Key key, this.title}) : super(key: key);
   final String title;
+
 
   @override
   _EncomendaPageState createState() => new _EncomendaPageState();
@@ -28,13 +30,14 @@ class _EncomendaPageState extends State<EncomendaPage> {
   double totalVenda = 0.0;
 
   double iva = 17.0;
-
+  List<Artigo> artigos;
   @override
   void initState() {
     items.addAll(encomendaItens);
 
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +69,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 15),
+                    margin: EdgeInsets.only(top: 5),
                     // color: Colors.red,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -75,7 +78,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                         Text(
                          totalVenda.toStringAsFixed(2).toString() + "\n",
                           style: TextStyle(
-                              fontSize: 36,
+                              fontSize: 30,
                               color: Colors.white,
                               fontWeight: FontWeight.bold),
                         ),
@@ -102,7 +105,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        espaco(),
+                        // espaco(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -112,7 +115,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                                   fontSize: 18, color: Colors.blue[300]),
                             ),
                             Text(
-                              mercadServicValor.toString(),
+                              mercadServicValor.toStringAsFixed(2).toString() + "\n",
                               style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.blueAccent,
@@ -120,7 +123,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                             )
                           ],
                         ),
-                        espaco(),
+                        // espaco(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -132,7 +135,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                               ),
                             ),
                             Text(
-                              iva.toString(),
+                              iva.toStringAsFixed(2).toString() + "\n",
                               style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.blueAccent,
@@ -140,7 +143,6 @@ class _EncomendaPageState extends State<EncomendaPage> {
                             )
                           ],
                         ),
-                        espaco(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -150,7 +152,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                                   fontSize: 18, color: Colors.blue[300]),
                             ),
                             Text(
-                              subtotal.toString(),
+                              subtotal.toStringAsFixed(2).toString(),
                               style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.blueAccent,
@@ -202,8 +204,6 @@ class _EncomendaPageState extends State<EncomendaPage> {
                                       context, '/cliente_selecionar_lista');
                                       // print(result);
                                       result.then((obj) {
-                                       print('obj');
-                                        print(obj);
                                       txtClienteController.text = obj.toString();
 
                                       });
@@ -264,23 +264,30 @@ class _EncomendaPageState extends State<EncomendaPage> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   void _onItemTapped(int index) {
+
     setState(() async {
       // Sair
       if (index == 0) {
         // Adicionar
       }
       if (index == 1) {
+
         final result =
-            await Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
-        List<Artigo> artigos = result;
-        if (encomendaItens.length == 1 && encomendaItens.runtimeType == Card().runtimeType) {
+          await Navigator.pushNamed(contexto, '/artigo_selecionar_lista', arguments: artigos);
+         artigos = result;
+
+
+        /** 
+         * Se tiver artigos selecionados.
+        *   limpar a lista artigos previamente selecionados
+        **/
+        if (result != null) {
           encomendaItens.clear();
+          items.clear();
         }
 
         if ( artigos != null ) {// encomendaItens.clear();
         artigos.forEach((a) {
-          print('result form 1');
-          print(a.descricao);
           mercadServicValor += a.preco;
           subtotal += ( a.preco * (iva / 100) ) + a.preco ;
           totalVenda += subtotal;
@@ -303,15 +310,34 @@ class _EncomendaPageState extends State<EncomendaPage> {
       _selectedIndex = index;
     });
   }
-}
+  
+Card encomendaItem(Artigo _artigo) {
+  var artigo_quantidade;
+  
+  Artigo artigo = _artigo;
+    createAlertDialog(BuildContext context) {
+    TextEditingController txtArtigoQtd = new TextEditingController();
+    return showDialog(context:  context, builder: (context) {
+      return AlertDialog(
+        title: Text('Quantidade'),
+        content: TextField(
+          controller: txtArtigoQtd,
+        ),
+        actions: <Widget>[
+          MaterialButton(
+            elevation: 5.0,
+            child: Text('alterar'),
+            onPressed: () {
+              Navigator.of(context).pop(txtArtigoQtd.text.toString());
+              
+            },
+          )
+        ],
+      );
+    });
+  }
 
-Padding espaco() {
-  return Padding(
-    padding: EdgeInsets.only(top: 15, left: 16, right: 16, bottom: 4),
-  );
-}
 
-Card encomendaItem(Artigo artigo) {
   return Card(
     child: Column(
       children: <Widget>[
@@ -338,10 +364,22 @@ Card encomendaItem(Artigo artigo) {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            Text("Qtd.: 1", style: TextStyle(color: Colors.blue)),
-            Text("Prc.Unit: " + artigo.preco.toString(),
+            GestureDetector(
+              onTap: () async {
+                  artigo_quantidade = await createAlertDialog(contexto); 
+                print('quantidade');
+                print(artigo_quantidade.toString());
+                // print(artigo);
+                setState(() {
+                  artigo.quantidade = int.parse(artigo_quantidade);
+
+                });
+              },
+              child: Text("Qtd.: " + artigo.quantidade.toString(), style: TextStyle(color: Colors.blue), ),
+            ),
+            Text("Prc.Unit: " + artigo.preco.toStringAsFixed(2).toString() ,
                 style: TextStyle(color: Colors.blue)),
-            Text("Subtotal: " + (artigo.preco * 1).toString(),
+            Text("Subtotal: " + (artigo.preco * 1).toStringAsFixed(2).toString(),
                 style: TextStyle(color: Colors.blue))
           ],
         ),
@@ -391,5 +429,13 @@ Slidable artigoEncomenda(Artigo artigo) {
         onTap: () => null,
       ),
     ],
+  );
+}
+
+}
+
+Padding espaco() {
+  return Padding(
+    padding: EdgeInsets.only(top: 15, left: 16, right: 16, bottom: 4),
   );
 }

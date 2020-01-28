@@ -4,9 +4,10 @@ import 'package:primobile/Database/Database.dart';
 import 'artigo_modelo.dart';
 
 class ArtigoSelecionarPage extends StatefulWidget {
-  ArtigoSelecionarPage({Key key, this.title}) : super(key: key);
-  final String title;
+ List<Artigo> artigos;
 
+  ArtigoSelecionarPage({Key key, this.artigos}) : super(key: key);
+  // final String title;
   @override
   _ArtigoSelecionarPageState createState() => new _ArtigoSelecionarPageState();
 }
@@ -23,6 +24,7 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
   @override
   void initState() {
     super.initState();
+
   }
 
   void filterSearchResults(String query) {
@@ -47,13 +49,46 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
       });
     }
   }
-  
 
+  bool is_selected = false;
+  var color = Colors.white;
 
+  bool adicionarArtigo(Artigo a) {
+    bool existe = false;
 
+    setState(() {
+      for (var i = 0; i < listaArtigoSelecionado.length; i++) {
+      if (listaArtigoSelecionado[i].artigo == a.artigo) {
+        existe = true;
+        listaArtigoSelecionado.removeAt(i);
+      }
+    }
+
+    if (! existe) {
+      listaArtigoSelecionado.add(a);
+    }
+    });
+
+    return existe;
+  }
+
+  bool existeArtigo(Artigo a) {
+    bool existe = false;
+
+    for (var i = 0; i < listaArtigoSelecionado.length; i++) {
+      if (listaArtigoSelecionado[i].artigo == a.artigo) {
+        existe = true;
+      }
+    }
+    return existe;
+  }
 
   @override
   Widget build(BuildContext context) {
+        widget.artigos = ModalRoute.of(context).settings.arguments;
+    if (widget.artigos !=  null) {
+      listaArtigoSelecionado = widget.artigos;
+    }
     return new Scaffold(
       appBar: new AppBar(
         backgroundColor: Colors.blue,
@@ -110,14 +145,13 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.save),
         onPressed: () async {
-          Navigator. pop(context, listaArtigoSelecionado);
+          Navigator.pop(context, listaArtigoSelecionado);
         },
       ),
     );
   }
 
   Widget listaArtigo() {
-    Color color;
     return FutureBuilder(
       future: getTodosArtigos(),
       builder: (context, snap) {
@@ -131,24 +165,32 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
           if (snap.hasError) {
             return Text('Erro: ${snap.error}');
           }
-          return ListView.builder(
+          return new ListView.builder(
             itemCount: snap.data.length,
             itemBuilder: (context, index) {
               Artigo artigo = snap.data[index];
-              return Container(
-                color: listaArtigoSelecionado.contains(artigo)
-                    ? Colors.red
-                    : Colors.white,
-                child: _ListaTile(
-                  
-                  onTap: () {
-                    if ( ! listaArtigoSelecionado.contains(artigo)) {
-                      listaArtigoSelecionado.add(artigo);
-                    } else {
-                      listaArtigoSelecionado.remove(artigo);
-                    }
-                    print('itens');
-                    print(artigo.descricao);
+
+              return new Card(
+                color: existeArtigo(artigo) == false ? Colors.white : Colors.red,
+                child:
+                    // new CheckboxListTile(
+                    //   value: artigo.quantidade > 10 ? true : false,
+                    //   title: new Text(
+                    //     artigo.descricao + '\n' + artigo.artigo + ' ' + artigo.unidade + ' ' + artigo.preco.toString(),
+                    //     style: TextStyle(color: Colors.blueAccent, fontSize: 16) ,),
+                    //   controlAffinity: ListTileControlAffinity.leading,
+                    //   onChanged:(bool val){
+                    //     setState(() {
+                    //       print('val $val');
+                    //     is_selected = val;
+                    //     });
+                    //   }
+
+                    // )
+                    _ListaTile(
+                  selected: is_selected,
+                  onTap:  () {
+                    adicionarArtigo(artigo);
                   },
                   leading: CircleAvatar(
                     backgroundColor: Colors.blue,

@@ -5,14 +5,14 @@ class Cliente {
   String nome;  
   int numContrib;
   Endereco endereco;
-  Cliente({this.cliente, this.nome, this.numContrib, this.endereco});
+  Cliente({this.cliente, this.nome, this.numContrib = 0, this.endereco});
 
 
   factory Cliente.fromMap(Map<String, dynamic> json) => new Cliente(
 
         cliente: json['cliente'],
         nome: json['nome'],
-        numContrib: json['numContrib'],
+      numContrib : int.parse(json['numContrib'] == ""  ? 0 : json['numContrib']  ),
         endereco: new Endereco(descricao: json['endereco']),
       );
 
@@ -25,10 +25,11 @@ class Cliente {
 
 
 factory Cliente.fromJson(Map<String, dynamic> data) {
+    var numContrib = data['numContrib'] == ""  ? "0" : data['numContrib']  ;
    return Cliente(
       cliente: data['cliente'],
       nome: data['nome'], 
-      numContrib : int.parse(data['numContrib']),
+      numContrib : int.parse(numContrib),
       endereco : new Endereco(descricao: data['endereco']),
    );
 }

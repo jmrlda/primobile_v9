@@ -11,7 +11,6 @@ class EncomendaPage extends StatefulWidget {
   EncomendaPage({Key key, this.title}) : super(key: key);
   final String title;
 
-
   @override
   _EncomendaPageState createState() => new _EncomendaPageState();
 }
@@ -38,7 +37,11 @@ class _EncomendaPageState extends State<EncomendaPage> {
     super.initState();
   }
 
-
+  void update() {
+    setState(() {
+      
+    });
+  }
   @override
   Widget build(BuildContext context) {
     contexto = context;
@@ -76,7 +79,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                         totalVenda.toStringAsFixed(2).toString() + "\n",
+                          totalVenda.toStringAsFixed(2).toString() + "\n",
                           style: TextStyle(
                               fontSize: 30,
                               color: Colors.white,
@@ -115,7 +118,8 @@ class _EncomendaPageState extends State<EncomendaPage> {
                                   fontSize: 18, color: Colors.blue[300]),
                             ),
                             Text(
-                              mercadServicValor.toStringAsFixed(2).toString() + "\n",
+                              mercadServicValor.toStringAsFixed(2).toString() +
+                                  "\n",
                               style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.blueAccent,
@@ -135,7 +139,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                               ),
                             ),
                             Text(
-                              iva.toStringAsFixed(2).toString() + "\n",
+                              ivaTotal.toStringAsFixed(2).toString() + "\n",
                               style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.blueAccent,
@@ -202,12 +206,10 @@ class _EncomendaPageState extends State<EncomendaPage> {
                                 onTap: () async {
                                   final result = Navigator.pushNamed(
                                       context, '/cliente_selecionar_lista');
-                                      // print(result);
-                                      result.then((obj) {
-                                      txtClienteController.text = obj.toString();
-
-                                      });
-
+                                  // print(result);
+                                  result.then((obj) {
+                                    txtClienteController.text = obj.toString();
+                                  });
                                 },
 
                                 controller: txtClienteController,
@@ -264,18 +266,16 @@ class _EncomendaPageState extends State<EncomendaPage> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   void _onItemTapped(int index) {
-
     setState(() async {
       // Sair
       if (index == 0) {
         // Adicionar
       }
       if (index == 1) {
-
-        final result =
-          await Navigator.pushNamed(contexto, '/artigo_selecionar_lista', arguments: artigos);
-         artigos = result;
-
+        final result = await Navigator.pushNamed(
+            contexto, '/artigo_selecionar_lista',
+            arguments: artigos);
+        artigos = result;
 
         /** 
          * Se tiver artigos selecionados.
@@ -286,21 +286,18 @@ class _EncomendaPageState extends State<EncomendaPage> {
           items.clear();
         }
 
-        if ( artigos != null ) {// encomendaItens.clear();
-        artigos.forEach((a) {
-          mercadServicValor += a.preco;
-          subtotal += ( a.preco * (iva / 100) ) + a.preco ;
-          totalVenda += subtotal;
-          encomendaItens.add(artigoEncomenda(a));
-        });
-
+        if (artigos != null) {
+          // encomendaItens.clear();
+          artigos.forEach((a) {
+            mercadServicValor += a.preco * a.quantidade;
+            subtotal += (a.preco * (iva / 100)) + a.preco;
+            totalVenda += subtotal;
+            ivaTotal += (a.preco * (iva / 100));
+            encomendaItens.add(artigoEncomenda(a));
+            // encomendaItens.elementAt(0)
+          });
         }
-        setState(() {
-          // items.[0]
-          // items.clear();
-
-          items.addAll(encomendaItens);
-        });
+        items.addAll(encomendaItens);
       }
 
       // Terminar
@@ -310,132 +307,178 @@ class _EncomendaPageState extends State<EncomendaPage> {
       _selectedIndex = index;
     });
   }
-  
-Card encomendaItem(Artigo _artigo) {
-  var artigo_quantidade;
-  
-  Artigo artigo = _artigo;
+
+  ArtigoCard encomendaItem(Artigo artigo) {
+    var artigo_quantidade;
+
     createAlertDialog(BuildContext context) {
-    TextEditingController txtArtigoQtd = new TextEditingController();
-    return showDialog(context:  context, builder: (context) {
-      return AlertDialog(
-        title: Text('Quantidade'),
-        content: TextField(
-          controller: txtArtigoQtd,
-        ),
-        actions: <Widget>[
-          MaterialButton(
-            elevation: 5.0,
-            child: Text('alterar'),
-            onPressed: () {
-              Navigator.of(context).pop(txtArtigoQtd.text.toString());
-              
-            },
-          )
+      TextEditingController txtArtigoQtd = new TextEditingController();
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Quantidade'),
+              content: TextField(
+                controller: txtArtigoQtd,
+              ),
+              actions: <Widget>[
+                MaterialButton(
+                  elevation: 5.0,
+                  child: Text('alterar'),
+                  onPressed: () {
+                    Navigator.of(context).pop(txtArtigoQtd.text.toString());
+                  },
+                )
+              ],
+            );
+          });
+    }
+
+    return ArtigoCard  (
+      artigo: artigo,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(top: 15, left: 16, right: 16, bottom: 4),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Text(artigo.artigo,
+                  style: TextStyle(
+                      color: Colors.blue, fontWeight: FontWeight.bold)),
+              Text(artigo.descricao,
+                  style: TextStyle(
+                      color: Colors.blue, fontWeight: FontWeight.bold)),
+              Text(artigo.unidade == null ? " " : artigo.unidade,
+                  style: TextStyle(
+                      color: Colors.blue, fontWeight: FontWeight.bold))
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 15, left: 16, right: 16, bottom: 4),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              GestureDetector(
+                onTap: () async {
+                  artigo_quantidade = await createAlertDialog(contexto);
+                  // print('quantidade');
+                  // print(artigo_quantidade.toString());
+                  // // print(artigo);
+                  artigos[0].quantidade = int.parse(artigo_quantidade);
+                  // artigos.forEach((a) {
+                  //   if (a.artigo == artigo.artigo) {
+                  //     artigo.quantidade = -22;
+                  //     a.quantidade = -22;
+                  //   }
+                  // });
+                  // artigos[0].quantidade = -223;
+                  setState(() {
+                    
+                  });
+
+                },
+                child: Text(
+                  "Qtd.: " + artigos[0].quantidade.toString(),
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ),
+              Text("Prc.Unit: " + artigo.preco.toStringAsFixed(2).toString(),
+                  style: TextStyle(color: Colors.blue)),
+              Text(
+                  "Subtotal: " +
+                      (artigo.preco * artigo.quantidade).toStringAsFixed(2).toString(),
+                  style: TextStyle(color: Colors.blue))
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 15, left: 16, right: 16, bottom: 4),
+          ),
         ],
-      );
-    });
+      ),
+    );
   }
 
-
-  return Card(
-    child: Column(
+  Card encomendaItemVazio() {
+    return Card(
+        child: Column(
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 15, left: 16, right: 16, bottom: 4),
+        const SizedBox(height: 50),
+        RaisedButton(
+          color: Colors.blue,
+          onPressed: () async {
+            // Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
+            final result =
+                await Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
+            List<Artigo> artigos = result;
+            artigos.forEach((a) {
+              print('result form 2');
+              print(a.descricao);
+              // print(this.artigo.quantidade);
+            });
+          },
+          child: const Text('Adicionar ',
+              style: TextStyle(fontSize: 15, color: Colors.white)),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Text(artigo.artigo,
-                style:
-                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
-            Text(artigo.descricao,
-                style:
-                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
-            Text(artigo.unidade == null ? " " : artigo.unidade,
-                style:
-                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold))
-          ],
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 15, left: 16, right: 16, bottom: 4),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            GestureDetector(
-              onTap: () async {
-                  artigo_quantidade = await createAlertDialog(contexto); 
-                print('quantidade');
-                print(artigo_quantidade.toString());
-                // print(artigo);
-                setState(() {
-                  artigo.quantidade = int.parse(artigo_quantidade);
+        const SizedBox(height: 50),
+      ],
+    ));
+  }
 
-                });
-              },
-              child: Text("Qtd.: " + artigo.quantidade.toString(), style: TextStyle(color: Colors.blue), ),
-            ),
-            Text("Prc.Unit: " + artigo.preco.toStringAsFixed(2).toString() ,
-                style: TextStyle(color: Colors.blue)),
-            Text("Subtotal: " + (artigo.preco * 1).toStringAsFixed(2).toString(),
-                style: TextStyle(color: Colors.blue))
-          ],
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 15, left: 16, right: 16, bottom: 4),
+  Slidable artigoEncomenda(Artigo artigo) {
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 0.25,
+      child: encomendaItem(artigo),
+      secondaryActions: <Widget>[
+        IconSlideAction(
+          caption: 'Remover',
+          color: Colors.red,
+          icon: Icons.delete,
+          onTap: () => null,
         ),
       ],
-    ),
-  );
-}
-
-Card encomendaItemVazio() {
-  return Card(
-      child: Column(
-    children: <Widget>[
-      const SizedBox(height: 50),
-      RaisedButton(
-        color: Colors.blue,
-        onPressed: () async {
-          // Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
-          final result =
-              await Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
-          List<Artigo> artigos = result;
-          artigos.forEach((a) {
-            print('result form 2');
-            print(a.descricao);
-          });
-        },
-        child: const Text('Adicionar ',
-            style: TextStyle(fontSize: 15, color: Colors.white)),
-      ),
-      const SizedBox(height: 50),
-    ],
-  ));
-}
-
-Slidable artigoEncomenda(Artigo artigo) {
-  return Slidable(
-    actionPane: SlidableDrawerActionPane(),
-    actionExtentRatio: 0.25,
-    child: encomendaItem(artigo),
-    secondaryActions: <Widget>[
-      IconSlideAction(
-        caption: 'Remover',
-        color: Colors.red,
-        icon: Icons.delete,
-        onTap: () => null,
-      ),
-    ],
-  );
-}
-
+    );
+  }
 }
 
 Padding espaco() {
   return Padding(
     padding: EdgeInsets.only(top: 15, left: 16, right: 16, bottom: 4),
   );
+}
+
+class ArtigoCard extends Card {
+  ArtigoCard({
+    Key key,
+    this.color,
+    this.elevation,
+    this.shape,
+    this.borderOnForeground = true,
+    this.margin,
+    this.clipBehavior,
+    this.child,
+    this.semanticContainer = true,
+    this.artigo
+  }) : super(
+    key :key,
+    color : color,
+    elevation : elevation,
+    shape : shape,
+    borderOnForeground : borderOnForeground,
+    margin: margin,
+    clipBehavior : clipBehavior
+  );
+  final Color color;
+  final double elevation;
+  final ShapeBorder shape;
+  final Clip clipBehavior;
+  final bool borderOnForeground;
+  final EdgeInsetsGeometry margin;
+  final Widget child;
+  static const double _defaultElevation = 1.0;
+  final bool semanticContainer;
+  final Artigo artigo;
 }

@@ -170,7 +170,7 @@ void _loadFromApi  () async {
   var clienteApi = ClienteApiProvider();
   try {
 
-    // artigoApi.getTodosArtigos();
+    artigoApi.getTodosArtigos();
     clienteApi.getTodosClientes();
   //  List<Artigo> artigos = await artigoApi.getTodosArtigos();
   } catch (e) {

@@ -29,6 +29,8 @@ class DBProvider {
     return await openDatabase(path, version: 1, onOpen: ( db ) {
     },
      onCreate: (_.Database db, int version) async {
+       try {
+         
         await db.execute(" CREATE TABLE Artigo (" 
           "artigo TEXT PRIMARY KEY, "
           "descricao TEXT, "
@@ -62,7 +64,7 @@ class DBProvider {
       );
 
 
-      await db.execute(" CREATE TABLE usuario (" 
+      await db.execute(" CREATE TABLE Usuario (" 
           "usuario INTEGER PRIMARY KEY, "
           "nome TEXT, "
           "senha TEXT, "
@@ -72,7 +74,34 @@ class DBProvider {
           ")"
       );
 
+  await db.execute(" CREATE TABLE Encomenda (" 
+          "encomenda INTEGER PRIMARY KEY AUTOINCREMENT, "
+          "cliente TEXT, "
+          "vendedor TEXT, "
+          "data_hora TEXT, "
+          "valor REAL,"
+          "documento TEXT,"
+          "estado TEXT"
 
+          ")"
+      );
+
+      
+  await db.execute(" CREATE TABLE EncomendaItem (" 
+          "encomenda INTEGER , "
+          "artigo TEXT, "
+          "valor_unit REAL, "
+          "quantidade REAL, "
+          "valor_total REAL, "
+          "constraint encomenda_fk foreign key (encomenda) references Encomenda(encomenda), "
+          "constraint artigo_fk foreign key (artigo) references Artigo(artigo) , "
+          "constraint itemEncomenda_pk primary key (encomenda, artigo)"
+          ")"
+      );
+
+       } catch (e) {
+         print('[initDB] Erro: $e.message');
+       }
 
     });
   }

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:primobile/artigo/artigo_modelo.dart';
-import 'package:primobile/artigo/artigo_selecionar_page.dart';
+import 'package:primobile/encomenda/encomenda_modelo.dart';
+import 'package:primobile/encomenda/encomenda_api_provider.dart';
+// import 'package:primobile/artigo/artigo_api_provider.dart';
+
 // import 'package:numberpicker/numberpicker.dart';
 // import 'package:primobile/util.dart';
+import 'package:primobile/cliente/cliente_modelo.dart';
+import 'package:primobile/usuario/usuario_modelo.dart';
 
 BuildContext contexto;
 
@@ -27,7 +32,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
   double ivaTotal = 0.0;
   double subtotal = 0.0;
   double totalVenda = 0.0;
-
+  Cliente cliente = Cliente();
   double iva = 17.0;
   List<Artigo> artigos;
   @override
@@ -207,12 +212,14 @@ class _EncomendaPageState extends State<EncomendaPage> {
                                   final result = Navigator.pushNamed(
                                       context, '/cliente_selecionar_lista');
                                   // print(result);
-                                  result.then((obj) {
-                                    txtClienteController.text = obj.toString();
+                                  result.then((obj ) {
+                                     this.cliente = obj;
+                                    txtClienteController.text = this.cliente.nome;
                                   });
                                 },
 
                                 controller: txtClienteController,
+                                readOnly: true,
                               ),
                             ),
                             //  Spacer(),
@@ -262,8 +269,6 @@ class _EncomendaPageState extends State<EncomendaPage> {
   }
 
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   void _onItemTapped(int index) {
     setState(() async {
@@ -302,6 +307,16 @@ class _EncomendaPageState extends State<EncomendaPage> {
 
       // Terminar
       if (index == 2) {
+
+        EncomendapiProvider encomendaApi = EncomendapiProvider();
+
+        Usuario usuario = Usuario(usuario: 0111, nome: 'dercio', nivel: 'admin', documento: 'vd', senha: 'rere');
+        print(artigos);
+        print(this.cliente);
+        Encomenda encomenda = new Encomenda(cliente: this.cliente, vendedor: usuario, artigos: artigos, dataHora: DateTime.now(), estado: "pendente", valorTotal: 12121);
+
+        print(encomenda);
+        // encomendaApi.
         Navigator.pushNamed(contexto, '/encomenda_sucesso');
       }
       _selectedIndex = index;
@@ -309,10 +324,11 @@ class _EncomendaPageState extends State<EncomendaPage> {
   }
 
   ArtigoCard encomendaItem(Artigo artigo) {
-    var artigo_quantidade;
+    var artigoQuantidade;
 
     createAlertDialog(BuildContext context) {
       TextEditingController txtArtigoQtd = new TextEditingController();
+      
       return showDialog(
           context: context,
           builder: (context) {
@@ -363,11 +379,12 @@ class _EncomendaPageState extends State<EncomendaPage> {
             children: <Widget>[
               GestureDetector(
                 onTap: () async {
-                  artigo_quantidade = await createAlertDialog(contexto);
+                  
+                  artigoQuantidade = await createAlertDialog(contexto);
                   // print('quantidade');
-                  // print(artigo_quantidade.toString());
+                  // print(artigoQuantidade.toString());
                   // // print(artigo);
-                  artigos[0].quantidade = int.parse(artigo_quantidade);
+                  artigos[0].quantidade = double.parse(artigoQuantidade);
                   // artigos.forEach((a) {
                   //   if (a.artigo == artigo.artigo) {
                   //     artigo.quantidade = -22;
@@ -375,9 +392,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                   //   }
                   // });
                   // artigos[0].quantidade = -223;
-                  setState(() {
-                    
-                  });
+             
 
                 },
                 child: Text(
@@ -469,7 +484,7 @@ class ArtigoCard extends Card {
     shape : shape,
     borderOnForeground : borderOnForeground,
     margin: margin,
-    clipBehavior : clipBehavior
+    clipBehavior : clipBehavior,
   );
   final Color color;
   final double elevation;

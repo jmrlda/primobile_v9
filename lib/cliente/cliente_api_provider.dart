@@ -7,7 +7,7 @@ import 'cliente_modelo.dart';
 class ClienteApiProvider {
 
 Future<List<Cliente>> getTodosClientes() async {
-    var url = 'https://4e4f4969.ngrok.io/api/cliente';
+    var url = 'http://192.168.0.104:9191/api/cliente';
     Response response;
 
     try {
@@ -26,7 +26,6 @@ Future<List<Cliente>> getTodosClientes() async {
 
     return (response.data as List).map((cliente) {
       print('cliente: $cliente');
-      // print(artigo);
       DBProvider.db.insertCliente(Cliente.fromJson(cliente));
     }).toList();
   }

@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:primobile/artigo/artigo_modelo.dart';
 import 'package:primobile/cliente/cliente_modelo.dart';
+import 'package:primobile/encomenda/encomenda_modelo.dart';
 import 'package:primobile/usuario/usuario_modelo.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqflite.dart' as _;
@@ -32,10 +33,23 @@ class DBProvider {
           "artigo TEXT PRIMARY KEY, "
           "descricao TEXT, "
           "preco REAL, "
-          "quantidade INTEGER, "
+          "quantidadeStock REAL, "
           "iva REAL, "
           "civa REAL, "
-          "unidade TEXT"
+          "unidade TEXT,"
+          "pvp1 REAL,"
+          "pvp1Iva INTEGER,"
+          "pvp2 REAL,"
+          "pvp2Iva INTEGER,"
+          "pvp3 REAL,"
+          "pvp3Iva INTEGER,"
+          "pvp4 REAL,"
+          "pvp4Iva INTEGER,"
+          "pvp5 REAL,"
+          "pvp5Iva INTEGER,"
+          "pvp6 REAL,"
+          "pvp6Iva INTEGER"
+
           ")"
       );
 
@@ -78,9 +92,7 @@ novoArtigo( Artigo artigo ) async {
 getArtigo( String artigo ) async {
   final db = await database;
   var res = await db.query('Artigo', where: "artigo = ?", whereArgs: [artigo]);
-  if (res.isEmpty) print ('ops');
-  else
-  print('inserido');
+
   
   return res.isEmpty ? Artigo.fromMap(res.first) : null;
 }
@@ -89,20 +101,13 @@ getArtigo( String artigo ) async {
 
 getCliente( String cliente ) async {
   final db = await database;
-  var res = await db.query('Cliente', where: "cliente = ?", whereArgs: [cliente]);
-  if (res.isEmpty) print ('[getCliente]: vazio');
-  else
-  print('[getCliente]: encontrado');
-  
+  var res = await db.query('Cliente', where: "cliente = ?", whereArgs: [cliente]);  
   return res.isEmpty ? Artigo.fromMap(res.first) : null;
 }
 
 getUsuario( String usuario ) async {
   final db = await database;
   var res = await db.query('Usuario', where: "usuario = ?", whereArgs: [usuario]);
-  if (res.isEmpty) print ('[getUsuario]: vazio');
-  else
-  print('[getCliente]: encontrado');
   
   return res.isEmpty ? Artigo.fromMap(res.first) : null;
 }
@@ -207,7 +212,7 @@ apagarTodosClientes () async {
 
 
 
-insertArtigo( Artigo artigo ) async {
+Future<dynamic> insertArtigo( Artigo artigo ) async {
   final db = await database;
   var res;
   try {
@@ -216,9 +221,9 @@ insertArtigo( Artigo artigo ) async {
     artigo.toMap(),
     conflictAlgorithm: ConflictAlgorithm.replace,    
     );    
-    print('sucesso');
   } catch (e) {
     print('[insertArtigo] Ocorreu um erro');
+    print(e.message);
   }
 
   return res;
@@ -226,11 +231,22 @@ insertArtigo( Artigo artigo ) async {
 
 insertCliente( Cliente cliente ) async {
   final db = await database;
-  var res = await db.insert(
+  var res;
+  try {
+    
+  res = await db.insert(
     "Cliente", 
     cliente.toMap(),
     conflictAlgorithm: ConflictAlgorithm.replace,    
     );
+        print('sucesso');
+
+  } catch (e) {
+    print('[insertCliente] Ocorreu um erro');
+    print(e.message());
+
+  }
+
   return res;
 }
 
@@ -243,6 +259,19 @@ insertUsuario( Usuario usuario ) async {
     );
   return res;
 }
+
+
+
+insertEncomenda( Encomenda encomenda ) async {
+  final db = await database;
+  var res = await db.insert(
+    "Encomenda", 
+    encomenda.toMap(),
+    conflictAlgorithm: ConflictAlgorithm.replace,    
+    );
+  return res;
+}
+
 
 
 

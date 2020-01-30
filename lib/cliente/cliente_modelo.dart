@@ -12,7 +12,7 @@ class Cliente {
 
         cliente: json['cliente'],
         nome: json['nome'],
-      numContrib : int.parse(json['numContrib'] == ""  ? 0 : json['numContrib']  ),
+      numContrib : int.parse(json['numContrib'].toString()),
         endereco: new Endereco(descricao: json['endereco']),
       );
 

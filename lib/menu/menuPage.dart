@@ -159,17 +159,23 @@ class _MenuPageState extends State<MenuPage> {
 
 void opcaoAcao(String opcao) {
   if ( opcao == 'sincronizar') {
-  print(opcao);
   _loadFromApi();
 
   }
 }
 
 
-void _loadFromApi  () {
+void _loadFromApi  () async {
   var artigoApi = ArtigoApiProvider();
   var clienteApi = ClienteApiProvider();
+  try {
 
-   artigoApi.getTodosArtigos();
-   clienteApi.getTodosClientes();
+    // artigoApi.getTodosArtigos();
+    clienteApi.getTodosClientes();
+  //  List<Artigo> artigos = await artigoApi.getTodosArtigos();
+  } catch (e) {
+    print('Erro: $e.message');
+  }
+   
+  //  clienteApi.getTodosClientes();
 }

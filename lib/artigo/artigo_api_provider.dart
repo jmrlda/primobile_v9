@@ -3,29 +3,29 @@ import 'package:primobile/Database/Database.dart';
 
 import 'artigo_modelo.dart';
 
-
 class ArtigoApiProvider {
-
-Future<List<Artigo>> getTodosArtigos() async {
+  void getTodosArtigos() async {
     // var url = 'http://127.0.0.1:3000/artigos';
-    var url = 'https://c72c693b.ngrok.io/api/artigo';
+    var url = 'http://192.168.0.104:9191/api/artigo';
     Response response;
-    print(url);   
     try {
-     response = await Dio().get( url);
-      
-      print('response');
-      print(response);
+      response = await Dio().get(url);
+      List a = response.data;
+      a.forEach((x) async {
+    await DBProvider.db.insertArtigo( Artigo.fromJson(x));
+      });
+
     } on DioError catch (e) {
-      print(e.response);
-      return null;
+      print("[ArtigoApiProvider]ERRO: $e.message");
     }
 
-    return (response.data as List).map((artigo) {
-      print('artigo: $artigo');
-      // print(artigo);
-      DBProvider.db.insertArtigo(Artigo.fromJson(artigo));
-    }).toList();
+
   }
 
+  void insertArtigo(List<Artigo> artigos) async {
+
+    for (Artigo a in artigos) {
+      await DBProvider.db.insertArtigo(a);
+    }
+  }
 }

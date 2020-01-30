@@ -31,4 +31,10 @@ Future<List<Encomenda>> getTodasEncomendas(String  token) async {
     }).toList();
   }
 
+
+
+  void insertEncomenda(Encomenda encomenda) async {
+      await DBProvider.db.insertEncomenda(encomenda);
+    
+  }
 }

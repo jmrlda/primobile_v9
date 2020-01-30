@@ -50,7 +50,7 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
     }
   }
 
-  bool is_selected = false;
+  bool isSelected = false;
   var color = Colors.white;
 
   bool adicionarArtigo(Artigo a) {
@@ -188,7 +188,7 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
 
                     // )
                     _ListaTile(
-                  selected: is_selected,
+                  selected: isSelected,
                   onTap:  () {
                     adicionarArtigo(artigo);
                   },

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:primobile/util.dart';
-
+import 'package:primobile/Database/Database.dart';
 import 'cliente_modelo.dart';
-
 
 class ClienteSelecionarPage extends StatefulWidget {
   ClienteSelecionarPage({Key key, this.title}) : super(key: key);
@@ -13,99 +11,21 @@ class ClienteSelecionarPage extends StatefulWidget {
 }
 
 class _ClienteSelecionarPageState extends State<ClienteSelecionarPage> {
+
   TextEditingController editingController = TextEditingController();
+  var duplicateItems;
+  var items = List<_ListaTile>();
 
-  // final duplicateItems = List<String>.generate(10000, (i) => "Item $i");
-
-  static List<Cliente> listaCliente =  [
-    Cliente(cliente: "A&L001", nome: "A & L Enterprises, Lda.", numContrib: 400079900, endereco: Endereco(ruaAv: "Matola") ),
-    Cliente(cliente: "ABB001", nome: "Abby Supermarket - Sociedade Unipessoal, Lda.", numContrib: 400079900, endereco: Endereco(ruaAv: "Av. Karl Marx No. 1902") ),
-    Cliente(cliente: "ABO001", nome: "Aboubakar Ntakirutimana", numContrib: 400079900, endereco: Endereco(ruaAv: "Bairro Mapandane, No. 714, R/C, Cidade da Matola") ),
-    Cliente(cliente: "ANG001", nome: "Angel Mini-Supermercado", numContrib: 400079900, endereco: Endereco(ruaAv: "Av. Fernao de Magalhaes nº 797/801") ),
-  ];
-  
-
-  List<ListTile> testeLista (BuildContext context) {
-    return  <ListaTile>[
-    
-            ListaTile(
-              onTap: () {
-                Navigator.pop(context, "Dercio Guirruta");
-              },
-              leading: CircleAvatar(
-                backgroundColor: Colors.blue,
-                // radius: 50.0,
-                child: Icon(
-                  Icons.person,
-                  color: Colors.white,
-                  // size: 50.0,
-                ),
-              ),
-              title: Text(
-                'Dercio Guirruta',
-                style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(
-                'Maputo, xipamanine',
-                style:
-                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-              ),
-              data: 'Dercio Guirruta',
-            ),
-
-        
-
-            ListaTile(
-                 onTap: () {
-                Navigator.pop(context, "Leo");
-              },
-              leading: CircleAvatar(
-                backgroundColor: Colors.blue,
-                // radius: 50.0,
-                child: Icon(
-                  Icons.person,
-                  color: Colors.white,
-                  // size: 50.0,
-                ),
-              ),
-              title: Text(
-                'Leo',
-                style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(
-                'Maputo, Malanga',
-                style:
-                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-              ),
-
-              data: "Leo"
-            ),
-
-      
-		
-  ];
-  }
-
-  var items = List<ListaTile>();
-   var duplicateItems = <ListaTile> [];
   @override
   void initState() {
-
-    items.addAll(duplicateItems);
     super.initState();
   }
 
   void filterSearchResults(String query) {
-    List<ListaTile> dummySearchList = List<ListaTile>();
+    List<_ListaTile> dummySearchList = List<_ListaTile>();
     dummySearchList.addAll(duplicateItems);
     if (query.isNotEmpty) {
-      List<ListaTile> dummyListData = List<ListaTile>();
+      List<_ListaTile> dummyListData = List<_ListaTile>();
       dummySearchList.forEach((item) {
         if (item.contem(query)) {
           dummyListData.add(item);
@@ -126,14 +46,8 @@ class _ClienteSelecionarPageState extends State<ClienteSelecionarPage> {
 
   @override
   Widget build(BuildContext context) {
-      setState(() {
-        print('testeLista');
-        duplicateItems =  testeLista(context);
-        items.clear();
-        items.addAll(duplicateItems);
-      });
     return new Scaffold(
-        appBar:  new AppBar(
+      appBar: new AppBar(
         backgroundColor: Colors.blue,
         centerTitle: true,
         title: new Text("Clientes"),
@@ -141,7 +55,6 @@ class _ClienteSelecionarPageState extends State<ClienteSelecionarPage> {
           icon: new Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        
       ),
       body: Container(
         child: Column(
@@ -151,29 +64,20 @@ class _ClienteSelecionarPageState extends State<ClienteSelecionarPage> {
               height: 100,
               decoration:
                   BoxDecoration(color: Color.fromRGBO(241, 249, 255, 100)
-                      // gradient: LinearGradient(
-                      //     // begin: ``
-                      //     colors: [Colors.blueAccent, Colors.blueAccent]),
                       ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  
                   Container(
                     width: MediaQuery.of(context).size.width / 1.2,
                     height: 45,
-                    // margin: EdgeInsets.only(top: 64),/s
                     padding:
                         EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
                     decoration: BoxDecoration(
-                        // borderRadius: BorderRadius.all(
-                        //   // Radius.circular(50)
-                        // ),
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black12,
-                            // blurRadius: 5
                           )
                         ]),
                     child: TextField(
@@ -194,24 +98,129 @@ class _ClienteSelecionarPageState extends State<ClienteSelecionarPage> {
                 ],
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return items[index];
-                  // ListTile(
-                  //   title: Text('${items[index]}'),
-                  // );
-                },
-              ),
-            ),
-            
+            Expanded(child: listaCliente()
+                ),
           ],
         ),
-
       ),
-    
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.sync),
+        onPressed: () async {
+        },
+      ),
     );
   }
+}
+
+Widget listaCliente() {
+  return FutureBuilder(
+    future: teste(),
+    builder: (context, snap) {
+      if ((snap.connectionState == ConnectionState.none &&
+              snap.hasData == null) ||
+          snap.connectionState == ConnectionState.waiting) {
+        return Container(
+          child: CircularProgressIndicator(),
+        );
+      } else if (snap.connectionState == ConnectionState.done) {
+        if (snap.hasError) {
+          return Text('Erro: ${snap.error}');
+        }
+        return ListView.builder(
+          itemCount: snap.data.length,
+          itemBuilder: (context, index) {
+            Cliente cliente = snap.data[index];
+            return Container(
+              child: _ListaTile(
+              onTap: () {
+                Navigator.pop(context, cliente);
+              },
+                leading: CircleAvatar(
+                  backgroundColor: Colors.blue,
+                  child: Icon(
+                    Icons.local_offer,
+                    color: Colors.white,
+                  ),
+                ),
+                title: Text(
+                  cliente.nome,
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  cliente.endereco.descricao +
+                      ' - ' +
+                      cliente.numContrib.toString() 
+                      ,
+                  style: TextStyle(color: Colors.blueAccent, fontSize: 16),
+                ),
+                data: cliente,
+              ),
+            );
+          },
+        );
+      }
+      return Text('Ocorreu um erro desconhecido: ${snap.error}');
+    },
+  );
+}
+
+
+
+class _ListaTile extends ListTile {
+  _ListaTile(
+      {Key key,
+      this.leading,
+      this.title,
+      this.subtitle,
+      this.trailing,
+      this.isThreeLine = false,
+      this.dense,
+      this.contentPadding,
+      this.enabled = true,
+      this.onTap,
+      this.onLongPress,
+      this.selected = false,
+      this.data = ""})
+      : super(
+            key: key,
+            leading: leading,
+            title: title,
+            subtitle: subtitle,
+            trailing: trailing,
+            isThreeLine: isThreeLine,
+            dense: dense,
+            contentPadding: contentPadding,
+            enabled: enabled,
+            onTap: onTap,
+            onLongPress: onLongPress,
+            selected: selected);
+  final Widget leading;
+  final Widget title;
+  final Widget subtitle;
+  final Widget trailing;
+  final bool isThreeLine;
+  final bool dense;
+  final EdgeInsetsGeometry contentPadding;
+  final bool enabled;
+  final GestureTapCallback onTap;
+  final GestureLongPressCallback onLongPress;
+  final bool selected;
+  final dynamic data;
+
+  dynamic getTitle() {
+    return this.data;
+  }
+
+  bool contem(value) {
+    return this.data.toLowerCase().contains(value.toString().toLowerCase());
+  }
+}
+
+Future teste() async {
+  var res = await DBProvider.db.getTodosClientes();
+
+  return res;
 }

@@ -11,22 +11,13 @@ class ArtigoPage extends StatefulWidget {
 }
 
 class _ArtigoPageState extends State<ArtigoPage> {
+
   TextEditingController editingController = TextEditingController();
-
-  // final duplicateItems = List<String>.generate(10000, (i) => "Item $i");
-  static List<Artigo> testArtigos = [];
-
-  // List<Artigo> getArtigo() async {
-  //   Lis
-  // }
   var duplicateItems;
-
   var items = List<_ListaTile>();
 
   @override
   void initState() {
-    // items.addAll(duplicateItems);
-    // print(Artigo().fetchArtigos());
     super.initState();
   }
 
@@ -73,9 +64,6 @@ class _ArtigoPageState extends State<ArtigoPage> {
               height: 100,
               decoration:
                   BoxDecoration(color: Color.fromRGBO(241, 249, 255, 100)
-                      // gradient: LinearGradient(
-                      //     // begin: ``
-                      //     colors: [Colors.blueAccent, Colors.blueAccent]),
                       ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -83,18 +71,13 @@ class _ArtigoPageState extends State<ArtigoPage> {
                   Container(
                     width: MediaQuery.of(context).size.width / 1.2,
                     height: 45,
-                    // margin: EdgeInsets.only(top: 64),/s
                     padding:
                         EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
                     decoration: BoxDecoration(
-                        // borderRadius: BorderRadius.all(
-                        //   // Radius.circular(50)
-                        // ),
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black12,
-                            // blurRadius: 5
                           )
                         ]),
                     child: TextField(
@@ -116,16 +99,6 @@ class _ArtigoPageState extends State<ArtigoPage> {
               ),
             ),
             Expanded(child: listaArtigo()
-                // ListView.builder(
-                //   shrinkWrap: true,
-                //   itemCount: items.length,
-                //   itemBuilder: (context, index) {
-                //     return items[index];
-                //     // ListTile(
-                //     //   title: Text('${items[index]}'),
-                //     // );
-                //   },
-                // ),
                 ),
           ],
         ),
@@ -133,18 +106,6 @@ class _ArtigoPageState extends State<ArtigoPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.sync),
         onPressed: () async {
-          // testArtigos.forEach((artigo) async {
-          //   print(artigo.artigo);
-          //   await DBProvider.db.novoArtigo(artigo);
-          //   setState(() {
-
-          //   });
-          // });
-          // getTodosArtigos('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMTQ1OWRmN2M4ZmFhMDU1Y2U1NTJhNCIsInBlcmZpbCI6ImFkbWluIiwiZG9jdW1lbnRvIjoidmQyIiwiaWF0IjoxNTc4NDcyMTk1LCJleHAiOjE1Nzg0NzI0OTV9.UfjxlYt9sL8XjUWVgtbaxdkfl93L8xo6KlL1saLYMQA');
-          // List<Artigo> artigos = await DBProvider.db.getTodosArtigos();
-          // duplicateItems = artigos;
-          // print('size');
-          // print(artigos.length);
         },
       ),
     );
@@ -169,16 +130,13 @@ Widget listaArtigo() {
           itemCount: snap.data.length,
           itemBuilder: (context, index) {
             Artigo artigo = snap.data[index];
-            // artigo.fetchArtigos();
             return Container(
               child: _ListaTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.blue,
-                  // radius: 50.0,
                   child: Icon(
                     Icons.local_offer,
                     color: Colors.white,
-                    // size: 50.0,
                   ),
                 ),
                 title: Text(

@@ -298,8 +298,34 @@ insertEncomenda( Encomenda encomenda ) async {
     encomenda.toMap(),
     conflictAlgorithm: ConflictAlgorithm.replace,    
     );
-  return res;
+  
+    print('sucesso encomenda $res');
+    
+    insertEncomendaItem(encomenda.artigos, res);
+
+      return res;
 }
+
+void insertEncomendaItem( List<Artigo> artigos, int encomendaPk) async {
+  final db = await database;
+  artigos.forEach((artigo) async{
+
+    var res = await db.insert(
+    "EncomendaItem", 
+   {
+        'encomenda': encomendaPk,
+        'artigo': artigo.artigo,
+        'valor_unit': artigo.preco,
+        'quantidade':artigo.quantidade,
+        'valor_total': artigo.preco * artigo.quantidade   
+   },
+    conflictAlgorithm: ConflictAlgorithm.replace,    
+    );
+        print('sucesso encomenda item $res');
+    });
+
+}
+
 
 
 

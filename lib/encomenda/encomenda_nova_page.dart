@@ -314,7 +314,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
         print(artigos);
         print(this.cliente);
         Encomenda encomenda = new Encomenda(cliente: this.cliente, vendedor: usuario, artigos: artigos, dataHora: DateTime.now(), estado: "pendente", valorTotal: 12121);
-
+        encomendaApi.insertEncomenda(encomenda);
         print(encomenda);
         // encomendaApi.
         Navigator.pushNamed(contexto, '/encomenda_sucesso');
@@ -427,12 +427,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
             // Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
             final result =
                 await Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
-            List<Artigo> artigos = result;
-            artigos.forEach((a) {
-              print('result form 2');
-              print(a.descricao);
-              // print(this.artigo.quantidade);
-            });
+
           },
           child: const Text('Adicionar ',
               style: TextStyle(fontSize: 15, color: Colors.white)),

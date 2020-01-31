@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:primobile/Database/Database.dart';
+import 'package:primobile/encomenda/encomenda_modelo.dart';
 
 import 'cliente_modelo.dart';
 
@@ -30,4 +31,15 @@ Future<List<Cliente>> getTodosClientes() async {
     }).toList();
   }
 
+
+  void insertEncomenda(List<Encomenda> encomendas) async {
+
+    for (Encomenda enc in encomendas) {
+      int rv = await DBProvider.db.insertEncomenda(enc);
+      print('sucesso pt2 $rv');
+    }
+  }
 }
+
+
+

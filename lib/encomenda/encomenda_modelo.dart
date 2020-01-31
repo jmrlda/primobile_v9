@@ -23,21 +23,31 @@ Encomenda({this.cliente, this.vendedor, this.artigos, this.valorTotal, this.esta
         cliente: json['cliente'],
         vendedor: json['nome'],
         artigos: json['artigos'],
-        valorTotal: json['valorTotal'],
+        valorTotal: json['valor'],
         estado: json['estado'],
-        dataHora: json['dataHora'],
+        dataHora: json['data_hora'],
 
       );
 
   Map<String, dynamic> toMap() => {
-        'cliente': cliente,
-        'vendedor': vendedor,
-        'artigos': artigos,
-        'valorTotal':valorTotal,
+        'cliente': cliente.cliente,
+        'vendedor': vendedor.usuario,
+        // 'artigos': artigos,
+        'valor':valorTotal,
         'estado':estado,
-        'dataHora':dataHora,
+        'data_hora':dataHora.toString(),
 
       };
+
+  Map<String, dynamic> ItemtoMap() => {
+        'encomenda': id,
+        'artigo': vendedor.usuario,
+        'valor_unit': artigos,
+        'quantidade':valorTotal,
+        'valor_total':estado,
+      };
+
+      
 
 
 factory Encomenda.fromJson(Map<String, dynamic> data) {
@@ -45,9 +55,9 @@ factory Encomenda.fromJson(Map<String, dynamic> data) {
    cliente: data['cliente'],
         vendedor: data['nome'],
         artigos: data['artigos'],
-        valorTotal: data['valorTotal'],
+        valorTotal: data['valor'],
         estado: data['estado'],
-        dataHora: data['dataHora'],
+        dataHora: data['data_hora'],
 
    );
 }

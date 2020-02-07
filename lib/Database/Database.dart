@@ -118,27 +118,29 @@ novoArtigo( Artigo artigo ) async {
   return res;
 }
 
-getArtigo( String artigo ) async {
+Future<Artigo> getArtigo( String artigo ) async {
   final db = await database;
   var res = await db.query('Artigo', where: "artigo = ?", whereArgs: [artigo]);
 
   
-  return res.isEmpty ? Artigo.fromMap(res.first) : null;
+  return res.isEmpty ? Artigo.fromMap(res.first) : Artigo;
 }
 
 
 
-getCliente( String cliente ) async {
+Future<Cliente> getCliente( String cliente ) async {
   final db = await database;
   var res = await db.query('Cliente', where: "cliente = ?", whereArgs: [cliente]);  
-  return res.isEmpty ? Artigo.fromMap(res.first) : null;
+  print("teste $res");
+  return res.length > 0 ? Cliente.fromMap(res[0]) : Cliente();
 }
 
-getUsuario( String usuario ) async {
+Future<Usuario> getUsuario( String usuario ) async {
   final db = await database;
   var res = await db.query('Usuario', where: "usuario = ?", whereArgs: [usuario]);
   
-  return res.isEmpty ? Artigo.fromMap(res.first) : null;
+    return res.length > 0 ? Usuario.fromMap(res[0]) : Usuario();
+
 }
 
 
@@ -170,7 +172,31 @@ getTodosClientes() async {
 }
 
 
+ dynamic getTodasEncomendas() async {
+  final db = await database;
+    var res;
+  // try {
+    
+  // } catch (e) {
+  //   print("Ocorreu um erro");
+  //   print(e);
+  // }
 
+   res = await db.query('Encomenda');
+
+  var enc = res.isNotEmpty ? res.map((c) => Encomenda.fromMap(c)).toList() : [];
+
+  return enc;
+}
+
+
+Future<Encomenda> getEncomenda( int encomenda ) async {
+  final db = await database;
+  var res = await db.query('Encomenda', where: "encomenda = ?", whereArgs: [encomenda]);
+  
+    return res.length > 0 ? Encomenda.fromMap(res[0]) : Encomenda();
+
+}
 
 
 

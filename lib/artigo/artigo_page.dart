@@ -111,6 +111,7 @@ class _ArtigoPageState extends State<ArtigoPage> {
     );
   }
 }
+        List<Widget> children;
 
 Widget listaArtigo() {
   return FutureBuilder(
@@ -119,8 +120,19 @@ Widget listaArtigo() {
       if ((snap.connectionState == ConnectionState.none &&
               snap.hasData == null) ||
           snap.connectionState == ConnectionState.waiting) {
-        return Container(
-          child: CircularProgressIndicator(),
+
+        return  ListView(
+          children: <Widget>[
+            SizedBox(
+              child: CircularProgressIndicator(),
+              width: 60,
+              height: 60,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Text('Aguardando resultado...'),
+            )
+          ],
         );
       } else if (snap.connectionState == ConnectionState.done) {
         if (snap.hasError) {

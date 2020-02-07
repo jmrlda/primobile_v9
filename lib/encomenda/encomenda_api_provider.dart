@@ -7,7 +7,7 @@ import 'encomenda_modelo.dart';
 class EncomendapiProvider {
 
 Future<List<Encomenda>> getTodasEncomendas(String  token) async {
-    var url = 'https://4e4f4969.ngrok.io/encomendas';
+    var url = 'https://5ac64b0b.ngrok.io/api/encomendas';
     Response response;
 
     try {

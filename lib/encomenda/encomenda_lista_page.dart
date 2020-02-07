@@ -3,7 +3,11 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 // local
 import 'package:flutter/material.dart';
+import 'package:primobile/Database/Database.dart';
+import 'package:primobile/encomenda/encomenda_modelo.dart';
 import 'package:primobile/encomenda/encomenda_nova_page.dart';
+
+import 'encomenda_api_provider.dart';
 
 class EncomendaListaPage extends StatelessWidget {
   @override
@@ -65,32 +69,63 @@ const List<Choice> choices = const <Choice>[
 ];
 
 class ChoiceCard extends StatelessWidget {
-  const ChoiceCard({Key key, this.choice}) : super(key: key);
+   ChoiceCard({Key key, this.choice}) : super(key: key);
 
   final Choice choice;
   final BuildContext context = null;
-
-  @override
   Widget build(BuildContext context) {
-    // final TextStyle textStyle = Theme.of(context).textTheme.display1;
-    return ListView(
-      children: <Widget>[
-        encomenda(context),
-        Divider(),
-        encomenda(context),
-        Divider(),
-        encomenda(context),
-        Divider(),
-        encomenda(context),
-        Divider(),
-        encomenda(context),
-        Divider(),
-        encomenda(context),
+    return FutureBuilder(
+      future: getEncomenda(), // a previously-obtained Future<String> or null
+      builder: (BuildContext context,  snapshot) {
+        List<Widget> children = List<Widget>();
+        if (snapshot.hasData) {
+          var  li = snapshot.data;
+          li.forEach((enc) async {
+              children.add(
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: encomenda(context, enc)
+            )
+              );
+          });
 
-      ],
+        
+        } else if (snapshot.hasError) {
+          children = <Widget>[
+            Icon(
+              Icons.error_outline,
+              color: Colors.red,
+              size: 60,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Text('Error: ${snapshot.error}'),
+            )
+          ];
+        } else {
+          children = <Widget>[
+            SizedBox(
+              child: CircularProgressIndicator(),
+              width: 60,
+              height: 60,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Text('Aguardando resultado...'),
+            )
+          ];
+        }
+        return ListView(
+          // child: Column(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   crossAxisAlignment: CrossAxisAlignment.center,
+          //   children: children,
+          // ),
+          children: children,
+        );
+      },
     );
   }
-
   Card tabBody(BuildContext context) {
     final TextStyle textStyle = Theme.of(context).textTheme.display1;
     return Card(
@@ -108,7 +143,8 @@ class ChoiceCard extends StatelessWidget {
     );
   }
 
-  Future<void> _ackAlert(BuildContext context) {
+  Future<void> _ackAlert(BuildContext context) async {
+
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -172,31 +208,24 @@ class ChoiceCard extends StatelessWidget {
     );
   }
 
-  Slidable encomenda(BuildContext context) {
+  Slidable encomenda(BuildContext context,  Encomenda enc) {
+
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
       actionExtentRatio: 0.25,
-      child: encomendaItem(),
-      // actions: <Widget>[
-      //   IconSlideAction(
-      //     caption: 'Archive',
-      //     color: Colors.blue,
-      //     icon: Icons.archive,
-      //     onTap: () => _ackAlert(context),
-      //   ),
-      //   IconSlideAction(
-      //     caption: 'Share',
-      //     color: Colors.indigo,
-      //     icon: Icons.share,
-      //     onTap: () => _showSnackBar('Share'),
-      //   ),
-      // ],
+      child: encomendaItem(enc),
+    
       secondaryActions: <Widget>[
         IconSlideAction(
           caption: 'Editar',
           color: Colors.black45,
           icon: Icons.edit,
-          onTap: () => EncomendaPage(),
+          onTap: ()  {
+
+            EncomendapiProvider encomendaApi = EncomendapiProvider();
+            encomendaApi.getTodasEncomendas("token");
+            EncomendaPage();
+            },
         ),
           IconSlideAction(
           caption: 'Cancelar',
@@ -217,7 +246,7 @@ class ChoiceCard extends StatelessWidget {
 
 }
 
-SizedBox encomendaItem() {
+SizedBox encomendaItem(Encomenda enc)  {
   return SizedBox(
       child: Column(
     children: <Widget>[
@@ -229,12 +258,12 @@ SizedBox encomendaItem() {
               child: Row(
                 // mainAxisAlignment: MainAxisAlignment.,
                 children: <Widget>[
-                  Text("ENC001",
+                  Text(enc.id.toString(),
                       style: TextStyle(
                           color: Colors.blue, fontWeight: FontWeight.bold)),
                   Padding(
                     padding: EdgeInsets.only(left: 55),
-                    child: Text("Dercio Guirruta",
+                    child: Text(enc.cliente.cliente,
                         style: TextStyle(
                             color: Colors.blue,
                             fontWeight: FontWeight.bold,
@@ -249,13 +278,13 @@ SizedBox encomendaItem() {
               child: Row(
                 // mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  Text("5 Artigos",
+                  Text(enc.artigos.length.toString() + " Artigo(s)" ,
                       style: TextStyle(color: Colors.blue, fontSize: 16)),
                   Padding(
                     padding: EdgeInsets.only(
                       left: 30,
                     ),
-                    child: Text("No Valor de  300.00 meticais ",
+                    child: Text("No Valor de  " + enc.valorTotal.toString() + " meticais ",
                         style: TextStyle(color: Colors.blue, fontSize: 16)),
                   ),
                 ],
@@ -269,39 +298,8 @@ SizedBox encomendaItem() {
   ));
 }
 
-//  Widget _dialogRemoverItem() => AlertDialog(
 
-//       title: Text(
-//         "How to follow us?",
-//         textAlign: TextAlign.center,
-//       ),
-//       titleTextStyle: TextStyle(
-//           color: Colors.black, fontSize: 30, fontWeight: FontWeight.w700),
-//       titlePadding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-//       content: Text("1. You should login in the facebook.\n"
-//           "2. You should search the Flutter Open.\n"
-//           "3. Then, you can follow the Flutter Open."),
-//       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-//       contentTextStyle: TextStyle(color:  Colors.black87, fontSize: 16),
-//       actions: <Widget>[
-//         Container(
-//           height: 40,
-//           width: 100,
-//           child: FlatButton(
-//             child: Text(
-//               "Sure",
-//               style: TextStyle(color:  Colors.black87),
-//             ),
-//             color:  Colors.red,
-//             onPressed: () {
-//               print("Hello");
-//             },
-//           ),
-//         )
-//       ],
-//       shape: RoundedRectangleBorder(
-//           side: BorderSide(
-//             style: BorderStyle.none,
-//           ),
-//           borderRadius: BorderRadius.circular(10)),
-//     );
+dynamic  getEncomenda() async {
+    return await DBProvider.db.getTodasEncomendas();
+    // return res;
+}

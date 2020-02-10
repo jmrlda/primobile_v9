@@ -4,6 +4,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 // local
 import 'package:flutter/material.dart';
 import 'package:primobile/Database/Database.dart';
+import 'package:primobile/encomenda/encomendaItem_modelo.dart';
+import 'package:primobile/encomenda/encomenda_db.dart';
 import 'package:primobile/encomenda/encomenda_modelo.dart';
 import 'package:primobile/encomenda/encomenda_nova_page.dart';
 
@@ -79,14 +81,21 @@ class ChoiceCard extends StatelessWidget {
       builder: (BuildContext context,  snapshot) {
         List<Widget> children = List<Widget>();
         if (snapshot.hasData) {
-          var  li = snapshot.data;
-          li.forEach((enc) async {
+          List encDB = snapshot.data;
+          List  li = encDB[0];
+          List item = encDB[1];
+
+          li.forEach((enc)  {
+
+          // List<EncomendaItem> liEnc = item.map((e) => e.encomendaPk == enc1.id );
+              
               children.add(
             Padding(
               padding: const EdgeInsets.only(top: 16),
-              child: encomenda(context, enc)
+              child: encomenda(context, enc, item)
             )
               );
+
           });
 
         
@@ -208,12 +217,12 @@ class ChoiceCard extends StatelessWidget {
     );
   }
 
-  Slidable encomenda(BuildContext context,  Encomenda enc) {
+  Slidable encomenda(BuildContext context,  Encomenda enc, List itens) {
 
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
-      actionExtentRatio: 0.25,
-      child: encomendaItem(enc),
+      actionExtentRatio: 0.18,
+      child: encomendaItem(enc, itens),
     
       secondaryActions: <Widget>[
         IconSlideAction(
@@ -239,6 +248,12 @@ class ChoiceCard extends StatelessWidget {
           icon: Icons.delete,
           onTap: () => _ackAlert(context),
         ),
+                IconSlideAction(
+          caption: 'Ver',
+          color: Colors.green,
+          icon: Icons.open_with,
+        ),
+
       ],
     );
   }
@@ -246,7 +261,18 @@ class ChoiceCard extends StatelessWidget {
 
 }
 
-SizedBox encomendaItem(Encomenda enc)  {
+SizedBox encomendaItem(Encomenda enc, List itens)  {
+  int count = 0;
+  double total_valor = 0.0;
+
+  itens.forEach((element) {
+    EncomendaItem e = element;
+    if (e.encomendaPk.toString() == enc.id) {
+      total_valor += e.valorTotal;
+      count++;
+    }
+    
+  });
   return SizedBox(
       child: Column(
     children: <Widget>[
@@ -278,13 +304,13 @@ SizedBox encomendaItem(Encomenda enc)  {
               child: Row(
                 // mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  Text(enc.artigos.length.toString() + " Artigo(s)" ,
+                  Text(count.toString() + " Artigo(s)" ,
                       style: TextStyle(color: Colors.blue, fontSize: 16)),
                   Padding(
                     padding: EdgeInsets.only(
                       left: 30,
                     ),
-                    child: Text("No Valor de  " + enc.valorTotal.toString() + " meticais ",
+                    child: Text("No Valor de  " + total_valor.toString() + " meticais ",
                         style: TextStyle(color: Colors.blue, fontSize: 16)),
                   ),
                 ],
@@ -299,7 +325,12 @@ SizedBox encomendaItem(Encomenda enc)  {
 }
 
 
-dynamic  getEncomenda() async {
-    return await DBProvider.db.getTodasEncomendas();
-    // return res;
+  Future getEncomenda() async {
+    List<dynamic> encItem = await DBProvider.db.getTodasEncomendaItens();
+    List<dynamic> enc =  await DBProvider.db.getTodasEncomendas();
+    List encDB = List();
+
+    encDB.add(enc);
+    encDB.add(encItem);
+  return encDB;
 }

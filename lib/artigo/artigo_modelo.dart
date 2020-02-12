@@ -71,6 +71,7 @@ class Artigo {
         'descricao': descricao,
         'preco': preco,
         'quantidadeStock': quantidadeStock,
+        'quantidade' :   quantidade,
         'civa': civa,
         'iva': iva,
         'unidade': unidade,

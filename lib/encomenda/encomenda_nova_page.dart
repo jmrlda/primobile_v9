@@ -35,6 +35,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
   Cliente cliente = Cliente();
   double iva = 17.0;
   List<Artigo> artigos;
+  List artigo_json = List();
   @override
   void initState() {
     items.addAll(encomendaItens);
@@ -43,10 +44,9 @@ class _EncomendaPageState extends State<EncomendaPage> {
   }
 
   void update() {
-    setState(() {
-      
-    });
+    setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
     contexto = context;
@@ -212,9 +212,10 @@ class _EncomendaPageState extends State<EncomendaPage> {
                                   final result = Navigator.pushNamed(
                                       context, '/cliente_selecionar_lista');
                                   // print(result);
-                                  result.then((obj ) {
-                                     this.cliente = obj;
-                                    txtClienteController.text = this.cliente.nome;
+                                  result.then((obj) {
+                                    this.cliente = obj;
+                                    txtClienteController.text =
+                                        this.cliente.nome;
                                   });
                                 },
 
@@ -293,11 +294,14 @@ class _EncomendaPageState extends State<EncomendaPage> {
 
         if (artigos != null) {
           // encomendaItens.clear();
+          ivaTotal = totalVenda = subtotal = mercadServicValor = 0.0;
+          encomendaItens.clear();
+
           artigos.forEach((a) {
             mercadServicValor += a.preco * a.quantidade;
             subtotal += (a.preco * (iva / 100)) + a.preco;
             totalVenda += subtotal;
-            ivaTotal += (a.preco * (iva / 100));
+            ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
             encomendaItens.add(artigoEncomenda(a));
             // encomendaItens.elementAt(0)
           });
@@ -307,17 +311,29 @@ class _EncomendaPageState extends State<EncomendaPage> {
 
       // Terminar
       if (index == 2) {
+        if (artigos.length > 0) {
+          print("total iva $ivaTotal");
+          EncomendapiProvider encomendaApi = EncomendapiProvider();
+          Usuario usuario = Usuario(
+              usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB',
+              nome: 'dercio',
+              nivel: 'admin',
+              documento: 'vd',
+              senha: 'rere');
+          Encomenda encomenda = new Encomenda(
+              cliente: this.cliente,
+              vendedor: usuario,
+              artigos: artigos,
+              dataHora: DateTime.now(),
+              estado: "pendente",
+              valorTotal: totalVenda);
+          // encomendaApi.insertEncomenda(encomenda);
+          await encomendaApi.postEncomenda(encomenda);
 
-        EncomendapiProvider encomendaApi = EncomendapiProvider();
-
-        Usuario usuario = Usuario(usuario: 0111, nome: 'dercio', nivel: 'admin', documento: 'vd', senha: 'rere');
-        print(artigos);
-        print(this.cliente);
-        Encomenda encomenda = new Encomenda(cliente: this.cliente, vendedor: usuario, artigos: artigos, dataHora: DateTime.now(), estado: "pendente", valorTotal: 12121);
-        encomendaApi.insertEncomenda(encomenda);
-        print(encomenda);
-        // encomendaApi.
-        Navigator.pushNamed(contexto, '/encomenda_sucesso');
+          Navigator.pushNamed(contexto, '/encomenda_sucesso');
+        } else {
+          print('selecionar minimo 1 artigo');
+        }
       }
       _selectedIndex = index;
     });
@@ -328,7 +344,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
 
     createAlertDialog(BuildContext context) {
       TextEditingController txtArtigoQtd = new TextEditingController();
-      
+
       return showDialog(
           context: context,
           builder: (context) {
@@ -350,7 +366,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
           });
     }
 
-    return ArtigoCard  (
+    return ArtigoCard(
       artigo: artigo,
       child: Column(
         children: <Widget>[
@@ -379,12 +395,11 @@ class _EncomendaPageState extends State<EncomendaPage> {
             children: <Widget>[
               GestureDetector(
                 onTap: () async {
-                  
                   artigoQuantidade = await createAlertDialog(contexto);
                   // print('quantidade');
                   // print(artigoQuantidade.toString());
                   // // print(artigo);
-                  artigos[0].quantidade = double.parse(artigoQuantidade);
+                  artigo.quantidade = double.parse(artigoQuantidade);
                   // artigos.forEach((a) {
                   //   if (a.artigo == artigo.artigo) {
                   //     artigo.quantidade = -22;
@@ -392,11 +407,25 @@ class _EncomendaPageState extends State<EncomendaPage> {
                   //   }
                   // });
                   // artigos[0].quantidade = -223;
-             
 
+                  setState(() {
+                    if (artigos != null) {
+                      ivaTotal =
+                          totalVenda = subtotal = mercadServicValor = 0.0;
+
+                      artigos.forEach((a) {
+                        mercadServicValor += a.preco * a.quantidade;
+                        subtotal += ((a.preco * a.quantidade) * (iva / 100)) + (a.preco * a.quantidade);
+                        totalVenda += subtotal;
+                        ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
+                        encomendaItens.add(artigoEncomenda(a));
+                        // encomendaItens.elementAt(0)
+                      });
+                    }
+                  });
                 },
                 child: Text(
-                  "Qtd.: " + artigos[0].quantidade.toString(),
+                  "Qtd.: " + artigo.quantidade.toString(),
                   style: TextStyle(color: Colors.blue),
                 ),
               ),
@@ -404,7 +433,9 @@ class _EncomendaPageState extends State<EncomendaPage> {
                   style: TextStyle(color: Colors.blue)),
               Text(
                   "Subtotal: " +
-                      (artigo.preco * artigo.quantidade).toStringAsFixed(2).toString(),
+                      (artigo.preco * artigo.quantidade)
+                          .toStringAsFixed(2)
+                          .toString(),
                   style: TextStyle(color: Colors.blue))
             ],
           ),
@@ -427,7 +458,6 @@ class _EncomendaPageState extends State<EncomendaPage> {
             // Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
             final result =
                 await Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
-
           },
           child: const Text('Adicionar ',
               style: TextStyle(fontSize: 15, color: Colors.white)),
@@ -461,26 +491,26 @@ Padding espaco() {
 }
 
 class ArtigoCard extends Card {
-  ArtigoCard({
-    Key key,
-    this.color,
-    this.elevation,
-    this.shape,
-    this.borderOnForeground = true,
-    this.margin,
-    this.clipBehavior,
-    this.child,
-    this.semanticContainer = true,
-    this.artigo
-  }) : super(
-    key :key,
-    color : color,
-    elevation : elevation,
-    shape : shape,
-    borderOnForeground : borderOnForeground,
-    margin: margin,
-    clipBehavior : clipBehavior,
-  );
+  ArtigoCard(
+      {Key key,
+      this.color,
+      this.elevation,
+      this.shape,
+      this.borderOnForeground = true,
+      this.margin,
+      this.clipBehavior,
+      this.child,
+      this.semanticContainer = true,
+      this.artigo})
+      : super(
+          key: key,
+          color: color,
+          elevation: elevation,
+          shape: shape,
+          borderOnForeground: borderOnForeground,
+          margin: margin,
+          clipBehavior: clipBehavior,
+        );
   final Color color;
   final double elevation;
   final ShapeBorder shape;

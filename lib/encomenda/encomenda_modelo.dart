@@ -12,6 +12,7 @@ class Encomenda {
   Cliente cliente;
   Usuario vendedor;
   List<Artigo> artigos;
+  List artigos_json = List();
   double valorTotal;
   String estado;
   DateTime dataHora;
@@ -22,7 +23,7 @@ Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, 
 
   factory Encomenda.fromMap(Map<String, dynamic> json)   {
     
-    Usuario usuario = Usuario(usuario: 0111, nome: 'dercio', nivel: 'admin', documento: 'vd', senha: 'rere');
+    Usuario usuario = Usuario(usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB', nome: 'dercio', nivel: 'admin', documento: 'vd', senha: 'rere');
         Cliente cliente = Cliente(cliente: json['cliente']);
 
      return new Encomenda(
@@ -38,7 +39,7 @@ Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, 
 
 
   factory Encomenda.fromMap_2(Map<String, dynamic> json, Cliente cliente)   {
-    Usuario usuario = Usuario(usuario: 0111, nome: 'dercio', nivel: 'admin', documento: 'vd', senha: 'rere');
+    Usuario usuario = Usuario(usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB', nome: 'dercio', nivel: 'admin', documento: 'vd', senha: 'rere');
     // Cliente cliente = Cliente(cliente: json['cliente']);
      return new Encomenda(
          id: json['encomenda'].toString(),
@@ -60,6 +61,27 @@ Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, 
         'data_hora':dataHora.toString(),
 
       };
+
+      
+  Map<String, dynamic> toMapApi() { 
+    if (artigos != null) {
+    artigos.forEach((element) {
+      artigos_json.add(element.toMap());
+    });
+    } else {
+      artigos_json = [];
+    }
+
+    return {
+        'cliente': cliente.toMap(),
+        'vendedor': vendedor.toMap(),
+        'artigos': artigos_json,
+        'valorTotal':valorTotal,
+        'estado':estado,
+        'data_hora':dataHora.toString(),
+
+      };
+  }
 
   Map<String, dynamic> ItemtoMap() => {
         'encomenda': id,
@@ -109,7 +131,7 @@ factory Encomenda.fromJson(Map<String, dynamic> data) {
 
   static Future<Encomenda> fromMap_1(Map<String, dynamic> json)   async {
     
-    Usuario usuario = Usuario(usuario: 0111, nome: 'dercio', nivel: 'admin', documento: 'vd', senha: 'rere');
+    Usuario usuario = Usuario(usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB', nome: 'dercio', nivel: 'admin', documento: 'vd', senha: 'rere');
         Cliente cliente = await DBProvider.db.getCliente(json['cliente']);
 
      return new Encomenda(

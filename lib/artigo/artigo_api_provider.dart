@@ -6,7 +6,7 @@ import 'artigo_modelo.dart';
 class ArtigoApiProvider {
   void getTodosArtigos() async {
     // var url = 'http://127.0.0.1:3000/artigos';
-    var url = 'https://5ac64b0b.ngrok.io/api/artigo/';
+    var url = 'https://84aecaf4.ngrok.io/api/artigo/';
     Response response;
     try {
       response = await Dio().get(url);

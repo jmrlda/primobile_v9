@@ -7,7 +7,7 @@ import 'usuario_modelo.dart';
 class UsuarioApiProvider {
 
 Future<List<Usuario>> getTodosUsuario(String  token) async {
-    var url = 'https://5ac64b0b.ngrok.io/api/usuario';
+    var url = 'https://84aecaf4.ngrok.io/api/usuario';
     Response response;
 
     try {

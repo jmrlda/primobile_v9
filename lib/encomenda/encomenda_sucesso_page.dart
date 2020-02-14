@@ -15,12 +15,12 @@ class EncomendaSucessoPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Icon(
-                  Icons.block,
+                  Icons.check_circle,
                   color: Colors.blue,
                   size: 200,
                 ),
                 Text(
-                  "Aguarde",
+                  "Encomenda Salvo",
                   style: TextStyle(
                     color: Colors.blue,
                     fontSize: 20,
@@ -28,14 +28,26 @@ class EncomendaSucessoPage extends StatelessWidget {
                 ),
                 MaterialButton(
                   height: 56,
-                  
                   color: Colors.blue[50],
                   shape: CircleBorder(),
-                  child: Text('OK', style: TextStyle(
-                     color: Colors.blue
-                  ),),
+                  child: Text(
+                    'Voltar',
+                    style: TextStyle(color: Colors.blue),
+                  ),
                   onPressed: () {
                     Navigator.of(context).pop();
+                  },
+                ),
+                MaterialButton(
+                  height: 56,
+                  color: Colors.blue[50],
+                  shape: CircleBorder(),
+                  child: Text(
+                    'Menu',
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/menu');
                   },
                 )
               ],

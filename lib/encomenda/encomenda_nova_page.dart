@@ -331,6 +331,15 @@ class _EncomendaPageState extends State<EncomendaPage> {
           await encomendaApi.postEncomenda(encomenda);
 
           Navigator.pushNamed(contexto, '/encomenda_sucesso');
+          // limpar a lista de itens apos envio ou salvo na baese de dados;
+          items.clear();
+          encomendaItens.clear();
+          artigos.clear();
+          txtClienteController.clear();
+          mercadServicValor = 0;
+          subtotal = 0;
+          totalVenda  = 0;
+          ivaTotal  = 0;
         } else {
           print('selecionar minimo 1 artigo');
         }
@@ -415,7 +424,8 @@ class _EncomendaPageState extends State<EncomendaPage> {
 
                       artigos.forEach((a) {
                         mercadServicValor += a.preco * a.quantidade;
-                        subtotal += ((a.preco * a.quantidade) * (iva / 100)) + (a.preco * a.quantidade);
+                        subtotal += ((a.preco * a.quantidade) * (iva / 100)) +
+                            (a.preco * a.quantidade);
                         totalVenda += subtotal;
                         ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
                         encomendaItens.add(artigoEncomenda(a));

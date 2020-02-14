@@ -8,7 +8,7 @@ import 'cliente_modelo.dart';
 class ClienteApiProvider {
 
 Future<List<Cliente>> getTodosClientes() async {
-    var url = 'https://84aecaf4.ngrok.io/api/cliente';
+    var url = 'https://99b3a750.ngrok.io/api/cliente';
     Response response;
 
     try {

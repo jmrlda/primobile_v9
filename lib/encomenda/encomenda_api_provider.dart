@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 class EncomendapiProvider {
   Future<List<Encomenda>> getTodasEncomendas(String token) async {
-    var url = 'https://5ac64b0b.ngrok.io/api/encomenda';
+    var url = '\\https://252e57ea.ngrok.io/api/encomenda';
     Response response;
 
     try {
@@ -36,13 +36,15 @@ class EncomendapiProvider {
   }
 
   Future<http.Response> postEncomenda(Encomenda encomenda) async {
-    var url = 'https://84aecaf4.ngrok.io/api/encomenda/';
+    var url = 'https://99b3a750.ngrok.io/api/encomenda/';
 
     var body = json.encode(encomenda.toMapApi());
 
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: body);
 
+
+      // verificar o codigo do status
     print("${response.statusCode}");
     print("${response.body}");
     return response;

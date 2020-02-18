@@ -60,7 +60,7 @@ class DBProvider {
             ")");
 
         await db.execute(" CREATE TABLE Usuario ("
-            "usuario INTEGER PRIMARY KEY, "
+            "usuario TEXT, "
             "nome TEXT, "
             "senha TEXT, "
             "documento TEXT, "
@@ -138,7 +138,7 @@ class DBProvider {
 
   getTodosUsuarios() async {
     final db = await database;
-    var res = await db.query('Uusario');
+    var res = await db.query('Usuario');
     List<Usuario> usuarios =
         res.isNotEmpty ? res.map((c) => Usuario.fromMap(c)).toList() : [];
 

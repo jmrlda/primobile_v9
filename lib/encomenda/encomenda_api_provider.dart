@@ -36,7 +36,7 @@ class EncomendapiProvider {
   }
 
   Future<http.Response> postEncomenda(Encomenda encomenda) async {
-    var url = 'https://99b3a750.ngrok.io/api/encomenda/';
+    var url = 'https://2b1e04b0.ngrok.io/api/encomenda/';
 
     var body = json.encode(encomenda.toMapApi());
 

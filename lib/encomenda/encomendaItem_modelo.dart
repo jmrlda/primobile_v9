@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:primobile/Database/Database.dart';
 import 'package:primobile/artigo/artigo_modelo.dart';
 import 'encomenda_modelo.dart';

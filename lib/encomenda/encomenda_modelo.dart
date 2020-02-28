@@ -23,7 +23,7 @@ Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, 
 
   factory Encomenda.fromMap(Map<String, dynamic> json)   {
     
-    Usuario usuario = Usuario(usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB', nome: 'dercio', nivel: 'admin', documento: 'vd', senha: 'rere');
+    Usuario usuario = Usuario(usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB', nome: 'dercio', perfil: 'admin', documento: 'vd', senha: 'rere');
         Cliente cliente = Cliente(cliente: json['cliente']);
 
      return new Encomenda(
@@ -39,7 +39,7 @@ Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, 
 
 
   factory Encomenda.fromMap_2(Map<String, dynamic> json, Cliente cliente)   {
-    Usuario usuario = Usuario(usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB', nome: 'dercio', nivel: 'admin', documento: 'vd', senha: 'rere');
+    Usuario usuario = Usuario(usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB', nome: 'dercio', perfil: 'admin', documento: 'vd', senha: 'rere');
     // Cliente cliente = Cliente(cliente: json['cliente']);
      return new Encomenda(
          id: json['encomenda'].toString(),
@@ -131,7 +131,7 @@ factory Encomenda.fromJson(Map<String, dynamic> data) {
 
   static Future<Encomenda> fromMap_1(Map<String, dynamic> json)   async {
     
-    Usuario usuario = Usuario(usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB', nome: 'dercio', nivel: 'admin', documento: 'vd', senha: 'rere');
+    Usuario usuario = Usuario(usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB', nome: 'dercio', perfil: 'admin', documento: 'vd', senha: 'rere');
         Cliente cliente = await DBProvider.db.getCliente(json['cliente']);
 
      return new Encomenda(

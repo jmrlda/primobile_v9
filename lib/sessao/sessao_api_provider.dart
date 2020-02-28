@@ -1,0 +1,58 @@
+// import 'package:dio/dio.dart';
+
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+
+
+class SessaoApiProvider {
+
+  static String base_url = 'http://192.168.0.105:4000';
+  static  login(String nome_email, String senha) async {
+    var login_url = '/usuarios/login';
+
+    try {
+    var response = await http.post(base_url + login_url, body: {"nome": nome_email, "senha": senha});
+    _save(response.body);
+      _read();
+    } catch (e) {
+      print(e.message);
+      return null;
+    }
+
+
+  }
+   
+
+   // ler dados da sessao armazenado em um ficheiro
+   // e retornar o seu conteudo 
+  static  Future<Map<String, dynamic>> _read() async {
+     Map<String, dynamic> parsed =  Map<String, dynamic>();
+
+    try {
+      final directorio = await getApplicationDocumentsDirectory();
+      final file = File('${directorio.path}/sessao.json');
+
+      String text = await file.readAsString();
+     parsed = jsonDecode(text);
+    } catch ( e ) {
+      print('nao foi possivel ler o ficheiro');
+    }
+
+    return parsed;
+  }
+
+
+
+/** 
+ *  Salvar dados da sessao em um ficheiro para seu uso posterior
+ * 
+ **/
+  static _save(String data) async {
+    final directorio = await getApplicationDocumentsDirectory();
+    final file = File('${directorio.path}/sessao.json');
+    await file.writeAsString(data);
+  }
+}

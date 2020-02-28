@@ -8,7 +8,7 @@ import 'package:primobile/encomenda/encomenda_lista_page.dart';
 import 'package:primobile/encomenda/encomenda_nova_page.dart';
 import 'package:primobile/encomenda/encomenda_sucesso_page.dart';
 import 'package:primobile/menu/menuPage.dart';
-import 'package:primobile/signup/loginPage.dart';
+import 'package:primobile/sessao/loginPage.dart';
 
 
 void main() => runApp(

@@ -317,7 +317,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
           Usuario usuario = Usuario(
               usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB',
               nome: 'dercio',
-              nivel: 'admin',
+              perfil: 'admin',
               documento: 'vd',
               senha: 'rere');
           Encomenda encomenda = new Encomenda(

@@ -127,6 +127,24 @@ class DBProvider {
     return res.length > 0 ? Usuario.fromMap(res[0]) : Usuario();
   }
 
+
+  Future<Usuario> getUsuarioByName(String nome) async {
+    final db = await database;
+    var res =
+        await db.query('Usuario', where: "nome = ?", whereArgs: [nome]);
+
+    return res.length > 0 ? Usuario.fromMap(res[0]) : Usuario();
+  }
+
+
+
+  Future<Usuario> login(String nome_email, String senha) async {
+    final db = await database;
+    var res =
+        await db.query('Usuario', where: "nome = ? and senha = ?", whereArgs: [nome_email, senha]);
+
+    return res.length > 0 ? Usuario.fromMap(res[0]) : null;
+  }
   getTodosArtigos() async {
     final db = await database;
     var res = await db.query('Artigo');
@@ -145,7 +163,7 @@ class DBProvider {
     return usuarios;
   }
 
-  getTodosClientes() async {
+  Future<List<Cliente>> getTodosClientes() async {
     final db = await database;
     var res = await db.query('Cliente');
     List<Cliente> clientes =

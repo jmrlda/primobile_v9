@@ -5,7 +5,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 import 'package:primobile/Database/Database.dart';
 import 'package:primobile/encomenda/encomendaItem_modelo.dart';
-import 'package:primobile/encomenda/encomenda_db.dart';
 import 'package:primobile/encomenda/encomenda_modelo.dart';
 import 'package:primobile/encomenda/encomenda_nova_page.dart';
 
@@ -263,12 +262,12 @@ class ChoiceCard extends StatelessWidget {
 
 SizedBox encomendaItem(Encomenda enc, List itens)  {
   int count = 0;
-  double total_valor = 0.0;
+  double totalValor = 0.0;
 
   itens.forEach((element) {
     EncomendaItem e = element;
     if (e.encomendaPk.toString() == enc.id) {
-      total_valor += e.valorTotal;
+      totalValor += e.valorTotal;
       count++;
     }
     
@@ -310,7 +309,7 @@ SizedBox encomendaItem(Encomenda enc, List itens)  {
                     padding: EdgeInsets.only(
                       left: 30,
                     ),
-                    child: Text("No Valor de  " + total_valor.toString() + " meticais ",
+                    child: Text("No Valor de  " + totalValor.toString() + " meticais ",
                         style: TextStyle(color: Colors.blue, fontSize: 16)),
                   ),
                 ],

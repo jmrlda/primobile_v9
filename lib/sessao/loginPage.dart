@@ -109,44 +109,42 @@ class _LoginPageState extends State<LoginPage> {
                   String nome = txtNomeEmail.text.trim();
                   String senha = txtSenha.text.trim();
 
-                  SessaoApiProvider.login("paulo", "654321");
+                  bool rv = await SessaoApiProvider.login(nome, senha);
                   // Usuario usuario = await DBProvider.db.login(nome, senha);
 
-                  // if (usuario == null ||
-                  //     usuario.nome.length < 3 ||
-                  //     usuario.senha.length < 6) {
-                  //   setState (() {
-                  //     boxDecoration = BoxDecoration(
-                  //         borderRadius: BorderRadius.all(Radius.circular(50)),
-                  //         color: Colors.white,
-                  //         boxShadow: [
-                  //           BoxShadow(color: Colors.red, blurRadius: 5)
-                  //         ]);
-                  //   });
-                  //   showDialog(
-                  //     context: context,
-                  //     builder: (BuildContext context) {
-                  //       return      AlertDialog(
-                  //       title: Text("atenção"),
-                  //       content: Text(
-                  //           "Erro de autenticação. Verificar o Nome e a Senha"),
-                  //           actions: <Widget>[
-                  //             new FlatButton(
-                  //             child: new Text("Fechar"),
-                  //             onPressed: () {
-                  //               Navigator.of(context).pop();
-                  //             },                            
-                  //           ),
-                  //           ],
-                  //       );
-                  //     },
-                  //   );
+                  if (rv == false ) {
+                    setState (() {
+                      boxDecoration = BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(color: Colors.red, blurRadius: 5)
+                          ]);
+                    });
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return      AlertDialog(
+                        title: Text("atenção"),
+                        content: Text(
+                            "Erro de autenticação. Verificar o Nome e a Senha"),
+                            actions: <Widget>[
+                              new FlatButton(
+                              child: new Text("Fechar"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },                            
+                            ),
+                            ],
+                        );
+                      },
+                    );
                
-                  // } else {
-                  //   txtNomeEmail.clear();
-                  //   txtSenha.clear();
-                  //   Navigator.pushNamed(context, '/menu');
-                  // }
+                  } else {
+                    txtNomeEmail.clear();
+                    txtSenha.clear();
+                    Navigator.pushNamed(context, '/menu');
+                  }
                 }),
           ),
         ],

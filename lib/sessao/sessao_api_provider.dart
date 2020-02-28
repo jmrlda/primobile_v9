@@ -10,7 +10,7 @@ import 'package:path_provider/path_provider.dart';
 class SessaoApiProvider {
 
   static String base_url = 'http://192.168.0.105:4000';
-  static  login(String nome_email, String senha) async {
+  static Future<bool> login(String nome_email, String senha) async {
     var login_url = '/usuarios/login';
 
     try {
@@ -19,10 +19,11 @@ class SessaoApiProvider {
       _read();
     } catch (e) {
       print(e.message);
-      return null;
+      return false;
     }
 
 
+  return true;
   }
    
 

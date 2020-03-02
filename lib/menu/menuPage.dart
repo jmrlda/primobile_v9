@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:primobile/Database/Database.dart';
+import 'package:primobile/artigo/artigo_api_provider.dart';
+import 'package:primobile/cliente/cliente_api_provider.dart';
 import 'package:primobile/menu/opcoes.dart';
+import 'package:primobile/usuario/usuario_api_provider.dart';
 
 class MenuPage extends StatefulWidget {
   MenuPage({Key key}) : super(key: key);
@@ -160,9 +163,12 @@ void opcaoAcao(String opcao) {
 }
 
 void _loadFromApi() async {
-
+    var artigoApi = ArtigoApiProvider();
+    var clienteApi = ClienteApiProvider();
   try {
-    DBProvider.db.getTodosUsuarios();
+    artigoApi.getTodosArtigos();
+    clienteApi.getTodosClientes();
+
   } catch (e) {
     print('Erro: $e.message');
   }

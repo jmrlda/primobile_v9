@@ -8,6 +8,7 @@ import 'package:primobile/encomenda/encomenda_api_provider.dart';
 // import 'package:numberpicker/numberpicker.dart';
 // import 'package:primobile/util.dart';
 import 'package:primobile/cliente/cliente_modelo.dart';
+import 'package:primobile/sessao/sessao_api_provider.dart';
 import 'package:primobile/usuario/usuario_modelo.dart';
 
 BuildContext contexto;
@@ -314,12 +315,14 @@ class _EncomendaPageState extends State<EncomendaPage> {
         if (artigos.length > 0) {
           print("total iva $ivaTotal");
           EncomendapiProvider encomendaApi = EncomendapiProvider();
+            Map<String, dynamic> _usuario = await SessaoApiProvider.read();
+
           Usuario usuario = Usuario(
-              usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB',
-              nome: 'dercio',
-              perfil: 'admin',
-              documento: 'vd',
-              senha: 'rere');
+              usuario: _usuario['id'],
+              nome:  _usuario['nome'],
+              perfil:  _usuario['perfil'],
+              documento:  _usuario['documento']
+              );
           Encomenda encomenda = new Encomenda(
               cliente: this.cliente,
               vendedor: usuario,

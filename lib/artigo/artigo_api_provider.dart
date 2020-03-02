@@ -1,12 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:primobile/Database/Database.dart';
+import 'package:primobile/sessao/sessao_api_provider.dart';
 
 import 'artigo_modelo.dart';
 
 class ArtigoApiProvider {
   void getTodosArtigos() async {
     // var url = 'http://127.0.0.1:3000/artigos';
-    var url = 'https://2b1e04b0.ngrok.io/api/artigo/';
+    // var url = 'https://2b1e04b0.ngrok.io/api/artigo/';
+  Map<String, dynamic> parsed = await SessaoApiProvider.read();
+    Map<String, dynamic> filial = parsed['resultado'];
+
+  String protocolo = 'http://';
+  String host = filial['empresa_filial']['ip'];
+  String rota = '/api/artigo';
+  var url = protocolo + host + rota;    
+
     Response response;
     try {
       response = await Dio().get(url);

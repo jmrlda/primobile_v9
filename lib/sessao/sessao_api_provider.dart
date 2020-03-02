@@ -9,14 +9,19 @@ import 'package:path_provider/path_provider.dart';
 
 class SessaoApiProvider {
 
-  static String base_url = 'http://192.168.0.105:4000';
+  static String base_url = 'http://192.168.0.106:4000';
   static Future<bool> login(String nome_email, String senha) async {
     var login_url = '/usuarios/login';
 
     try {
     var response = await http.post(base_url + login_url, body: {"nome": nome_email, "senha": senha});
+    Map<String, dynamic> parsed =  Map<String, dynamic>();
+    parsed = jsonDecode(response.body);
+    if ( parsed['resultado'] == null ) {
+      return false;
+    }
     _save(response.body);
-      _read();
+      read();
     } catch (e) {
       print(e.message);
       return false;
@@ -29,7 +34,7 @@ class SessaoApiProvider {
 
    // ler dados da sessao armazenado em um ficheiro
    // e retornar o seu conteudo 
-  static  Future<Map<String, dynamic>> _read() async {
+  static  Future<Map<String, dynamic>> read() async {
      Map<String, dynamic> parsed =  Map<String, dynamic>();
 
     try {
@@ -38,6 +43,7 @@ class SessaoApiProvider {
 
       String text = await file.readAsString();
      parsed = jsonDecode(text);
+
     } catch ( e ) {
       print('nao foi possivel ler o ficheiro');
     }

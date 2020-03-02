@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:primobile/Database/Database.dart';
 import 'package:primobile/encomenda/encomenda_modelo.dart';
+import 'package:primobile/sessao/sessao_api_provider.dart';
 
 import 'cliente_modelo.dart';
 
@@ -8,7 +9,13 @@ import 'cliente_modelo.dart';
 class ClienteApiProvider {
 
 Future<List<Cliente>> getTodosClientes() async {
-    var url = 'https://2b1e04b0.ngrok.io/api/cliente';
+    // var url = 'https://2b1e04b0.ngrok.io/api/cliente';
+  Map<String, dynamic> parsed = await SessaoApiProvider.read();
+  Map<String, dynamic> filial = parsed['resultado'];
+  String protocolo = 'http://';
+  String host = filial['empresa_filial']['ip'];
+  String rota = '/api/cliente';
+  var url = protocolo + host + rota;    
     Response response;
 
     try {

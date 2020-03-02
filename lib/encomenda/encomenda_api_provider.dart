@@ -2,12 +2,21 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:primobile/Database/Database.dart';
+import 'package:primobile/sessao/sessao_api_provider.dart';
 import 'encomenda_modelo.dart';
 import 'package:http/http.dart' as http;
 
 class EncomendapiProvider {
+
+
   Future<List<Encomenda>> getTodasEncomendas(String token) async {
-    var url = '\\https://252e57ea.ngrok.io/api/encomenda';
+    
+  Map<String, dynamic> parsed = await SessaoApiProvider.read();
+  Map<String, dynamic> filial = parsed['resultado'];
+  String protocolo = 'http://';
+  String host = filial['empresa_filial']['ip'];
+  String rota = '/api/encomenda';
+  var url = protocolo + host + rota;  
     Response response;
 
     try {
@@ -36,7 +45,12 @@ class EncomendapiProvider {
   }
 
   Future<http.Response> postEncomenda(Encomenda encomenda) async {
-    var url = 'https://2b1e04b0.ngrok.io/api/encomenda/';
+  Map<String, dynamic> parsed = await SessaoApiProvider.read();
+  Map<String, dynamic> filial = parsed['resultado'];
+  String protocolo = 'http://';
+  String host = filial['empresa_filial']['ip'];
+  String rota = '/api/encomenda';
+  var url = protocolo + host + rota;  
 
     var body = json.encode(encomenda.toMapApi());
 

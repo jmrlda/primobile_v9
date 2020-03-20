@@ -39,6 +39,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
   List artigo_json = List();
   @override
   void initState() {
+    // encomendaItens.add(encomendaItemVazio());
     items.addAll(encomendaItens);
 
     super.initState();
@@ -307,7 +308,10 @@ class _EncomendaPageState extends State<EncomendaPage> {
             // encomendaItens.elementAt(0)
           });
         }
+        setState(() {
         items.addAll(encomendaItens);
+          
+        });
       }
 
       // Terminar
@@ -315,10 +319,11 @@ class _EncomendaPageState extends State<EncomendaPage> {
         if (artigos.length > 0) {
           print("total iva $ivaTotal");
           EncomendapiProvider encomendaApi = EncomendapiProvider();
-            Map<String, dynamic> _usuario = await SessaoApiProvider.read();
+            Map<String, dynamic> rv = await SessaoApiProvider.read();
+            Map<String, dynamic> _usuario = rv['resultado'];
 
           Usuario usuario = Usuario(
-              usuario: _usuario['id'],
+              usuario: _usuario['usuario'],
               nome:  _usuario['nome'],
               perfil:  _usuario['perfil'],
               documento:  _usuario['documento']
@@ -421,6 +426,13 @@ class _EncomendaPageState extends State<EncomendaPage> {
                   // artigos[0].quantidade = -223;
 
                   setState(() {
+
+
+                    // calcular o custo da encomenda que pode ter preco
+                    // ja incluido iva ou nao. 
+                    // Verificar o caso e calcular o custo total.
+                    
+
                     if (artigos != null) {
                       ivaTotal =
                           totalVenda = subtotal = mercadServicValor = 0.0;

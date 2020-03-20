@@ -53,8 +53,12 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
   bool isSelected = false;
   var color = Colors.white;
 
+  // ao selecionar um artigo, adionar a lista
+  // de artigos selecionados, se o artigo ja tivesse
+  // sido selecionado remover da lista.
   bool adicionarArtigo(Artigo a) {
     bool existe = false;
+
 
     setState(() {
       for (var i = 0; i < listaArtigoSelecionado.length; i++) {
@@ -172,22 +176,7 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
 
               return new Card(
                 color: existeArtigo(artigo) == false ? Colors.white : Colors.red,
-                child:
-                    // new CheckboxListTile(
-                    //   value: artigo.quantidade > 10 ? true : false,
-                    //   title: new Text(
-                    //     artigo.descricao + '\n' + artigo.artigo + ' ' + artigo.unidade + ' ' + artigo.preco.toString(),
-                    //     style: TextStyle(color: Colors.blueAccent, fontSize: 16) ,),
-                    //   controlAffinity: ListTileControlAffinity.leading,
-                    //   onChanged:(bool val){
-                    //     setState(() {
-                    //       print('val $val');
-                    //     is_selected = val;
-                    //     });
-                    //   }
-
-                    // )
-                    _ListaTile(
+                child: _ListaTile(
                   selected: isSelected,
                   onTap:  () {
                     adicionarArtigo(artigo);

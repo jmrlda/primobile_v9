@@ -17,13 +17,12 @@ class SessaoApiProvider {
     var response = await http.post(base_url + login_url, body: {"nome": nome_email, "senha": senha});
     Map<String, dynamic> parsed =  Map<String, dynamic>();
     parsed = jsonDecode(response.body);
-    if ( parsed['resultado'] == null ) {
+    if ( parsed ['resultado'] == null ) {
       return false;
     }
     _save(response.body);
       read();
     } catch (e) {
-      print(e.message);
       return false;
     }
 

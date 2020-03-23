@@ -332,7 +332,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
               cliente: this.cliente,
               vendedor: usuario,
               artigos: artigos,
-              dataHora: DateTime.now(),
+              dataHora: DateTime.now(), 
               estado: "pendente",
               valorTotal: totalVenda);
           // encomendaApi.insertEncomenda(encomenda);
@@ -432,21 +432,22 @@ class _EncomendaPageState extends State<EncomendaPage> {
                     // ja incluido iva ou nao. 
                     // Verificar o caso e calcular o custo total.
                     
+                  // refresh();
+                  refresh2();
+                    // if (artigos != null) {
+                    //   ivaTotal =
+                    //       totalVenda = subtotal = mercadServicValor = 0.0;
 
-                    if (artigos != null) {
-                      ivaTotal =
-                          totalVenda = subtotal = mercadServicValor = 0.0;
-
-                      artigos.forEach((a) {
-                        mercadServicValor += a.preco * a.quantidade;
-                        subtotal += ((a.preco * a.quantidade) * (iva / 100)) +
-                            (a.preco * a.quantidade);
-                        totalVenda += subtotal;
-                        ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
-                        encomendaItens.add(artigoEncomenda(a));
-                        // encomendaItens.elementAt(0)
-                      });
-                    }
+                    //   artigos.forEach((a) {
+                    //     mercadServicValor += a.preco * a.quantidade;
+                    //     subtotal += ((a.preco * a.quantidade) * (iva / 100)) +
+                    //         (a.preco * a.quantidade);
+                    //     totalVenda += subtotal;
+                    //     ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
+                    //     encomendaItens.add(artigoEncomenda(a));
+                    //     // encomendaItens.elementAt(0)
+                    //   });
+                    // }
                   });
                 },
                 child: Text(
@@ -472,6 +473,59 @@ class _EncomendaPageState extends State<EncomendaPage> {
     );
   }
 
+void refresh() {
+
+
+                    // calcular o custo da encomenda que pode ter preco
+                    // ja incluido iva ou nao. 
+                    // Verificar o caso e calcular o custo total.
+                    
+
+                    if (artigos != null) {
+                      ivaTotal =
+                          totalVenda = subtotal = mercadServicValor = 0.0;
+
+                      artigos.forEach((a) {
+                        mercadServicValor += a.preco * a.quantidade;
+                        subtotal += ((a.preco * a.quantidade) * (iva / 100)) +
+                            (a.preco * a.quantidade);
+                        totalVenda += subtotal;
+                        ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
+                        encomendaItens.add(artigoEncomenda(a));
+                        // encomendaItens.elementAt(0)
+                      });
+                    }
+                  }
+
+
+  void refresh2() {
+     /** 
+         * Se tiver artigos selecionados.
+        *   limpar a lista artigos previamente selecionados
+        **/
+
+          encomendaItens.clear();
+          items.clear();
+ 
+        if (artigos != null) {
+          // encomendaItens.clear();
+          ivaTotal = totalVenda = subtotal = mercadServicValor = 0.0;
+          encomendaItens.clear();
+
+          artigos.forEach((a) {
+            mercadServicValor += a.preco * a.quantidade;
+            subtotal += (a.preco * (iva / 100)) + a.preco;
+            totalVenda += subtotal;
+            ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
+            encomendaItens.add(artigoEncomenda(a));
+            // encomendaItens.elementAt(0)
+          });
+        }
+        setState(() {
+        items.addAll(encomendaItens);
+          
+        });
+  }
   Card encomendaItemVazio() {
     return Card(
         child: Column(
@@ -514,6 +568,7 @@ Padding espaco() {
     padding: EdgeInsets.only(top: 15, left: 16, right: 16, bottom: 4),
   );
 }
+
 
 class ArtigoCard extends Card {
   ArtigoCard(

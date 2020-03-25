@@ -10,7 +10,17 @@ import 'package:path_provider/path_provider.dart';
 class SessaoApiProvider {
 
   static String base_url = 'http://146.148.49.80:4000';
-  static Future<bool> login(String nome_email, String senha) async {
+
+  /**
+   * 
+   * @Retorno : inteiro 
+   *            0 - sucesso
+   *            1 - falha autenticacao
+   *            2 - falha acesso internet
+   *            3 - Erro desconhecido
+   * 
+   */
+  static Future<int> login(String nome_email, String senha) async {
     var login_url = '/usuarios/login';
 
     try {
@@ -18,16 +28,20 @@ class SessaoApiProvider {
     Map<String, dynamic> parsed =  Map<String, dynamic>();
     parsed = jsonDecode(response.body);
     if ( parsed ['resultado'] == null ) {
-      return false;
+      return 1;
     }
     _save(response.body);
       read();
-    } catch (e) {
-      return false;
+    }  catch (e) {
+      if (e.osError.errorCode == 111) {
+        return 2;
+      } 
+
+      return 3;
     }
 
 
-  return true;
+  return 0;
   }
    
 

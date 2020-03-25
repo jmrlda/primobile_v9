@@ -30,6 +30,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
   ];
 
   double mercadServicValor = 0.0;
+  double noIva = 0.0;
   double ivaTotal = 0.0;
   double subtotal = 0.0;
   double totalVenda = 0.0;
@@ -289,29 +290,46 @@ class _EncomendaPageState extends State<EncomendaPage> {
          * Se tiver artigos selecionados.
         *   limpar a lista artigos previamente selecionados
         **/
-        if (result != null) {
-          encomendaItens.clear();
-          items.clear();
-        }
 
-        if (artigos != null) {
-          // encomendaItens.clear();
-          ivaTotal = totalVenda = subtotal = mercadServicValor = 0.0;
-          encomendaItens.clear();
+        refresh2();
+        // if (result != null) {
+        //   encomendaItens.clear();
+        //   items.clear();
+        // }
 
-          artigos.forEach((a) {
-            mercadServicValor += a.preco * a.quantidade;
-            subtotal += (a.preco * (iva / 100)) + a.preco;
-            totalVenda += subtotal;
-            ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
-            encomendaItens.add(artigoEncomenda(a));
-            // encomendaItens.elementAt(0)
-          });
-        }
-        setState(() {
-        items.addAll(encomendaItens);
+        // if (artigos != null) {
+        //   // encomendaItens.clear();
+        //   ivaTotal = totalVenda = subtotal = mercadServicValor = 0.0;
+        //   encomendaItens.clear();
+
+        //   artigos.forEach((a) {
+        //     if (a.pvp1Iva == true) {
+        //     mercadServicValor += (a.pvp1 / ((iva + 100) / 100) ) * a.quantidade ;
+
+        //     subtotal +=  a.pvp1 * a.quantidade;
+        //     totalVenda += subtotal;
+        //     ivaTotal += mercadServicValor * (iva / 100);
+        //     encomendaItens.add(artigoEncomenda(a));
+
+
+
+
+        //     } else {
+        //     mercadServicValor += (a.pvp1 / ((iva + 100) / 100)  )  * a.quantidade;
+
+        //     subtotal +=  (a.pvp1 / ((iva + 100) / 100)  )  * a.quantidade;
+        //     totalVenda += subtotal;
+        //     ivaTotal = mercadServicValor * (iva / 100);
+        //     encomendaItens.add(artigoEncomenda(a));
+
+        //     }
+        //     // encomendaItens.elementAt(0)
+        //   });
+        // }
+        // setState(() {
+        // items.addAll(encomendaItens);
           
-        });
+        // });
       }
 
       // Terminar
@@ -348,6 +366,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
           subtotal = 0;
           totalVenda  = 0;
           ivaTotal  = 0;
+          noIva = 0;
         } else {
           print('selecionar minimo 1 artigo');
         }
@@ -459,7 +478,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                   style: TextStyle(color: Colors.blue)),
               Text(
                   "Subtotal: " +
-                      (artigo.preco * artigo.quantidade)
+                      ( (artigo.pvp1 / ((iva + 100) / 100) ) * artigo.quantidade)
                           .toStringAsFixed(2)
                           .toString(),
                   style: TextStyle(color: Colors.blue))
@@ -473,29 +492,29 @@ class _EncomendaPageState extends State<EncomendaPage> {
     );
   }
 
-void refresh() {
+// void refresh() {
 
 
-                    // calcular o custo da encomenda que pode ter preco
-                    // ja incluido iva ou nao. 
-                    // Verificar o caso e calcular o custo total.
+//                     // calcular o custo da encomenda que pode ter preco
+//                     // ja incluido iva ou nao. 
+//                     // Verificar o caso e calcular o custo total.
                     
 
-                    if (artigos != null) {
-                      ivaTotal =
-                          totalVenda = subtotal = mercadServicValor = 0.0;
+//                     if (artigos != null) {
+//                       ivaTotal =
+//                           totalVenda = subtotal = mercadServicValor = 0.0;
 
-                      artigos.forEach((a) {
-                        mercadServicValor += a.preco * a.quantidade;
-                        subtotal += ((a.preco * a.quantidade) * (iva / 100)) +
-                            (a.preco * a.quantidade);
-                        totalVenda += subtotal;
-                        ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
-                        encomendaItens.add(artigoEncomenda(a));
-                        // encomendaItens.elementAt(0)
-                      });
-                    }
-                  }
+//                       artigos.forEach((a) {
+//                         mercadServicValor += a.preco * a.quantidade;
+//                         subtotal += ((a.preco * a.quantidade) * (iva / 100)) +
+//                             (a.preco * a.quantidade);
+//                         totalVenda += subtotal;
+//                         ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
+//                         encomendaItens.add(artigoEncomenda(a));
+//                         // encomendaItens.elementAt(0)
+//                       });
+//                     }
+//                   }
 
 
   void refresh2() {
@@ -507,17 +526,33 @@ void refresh() {
           encomendaItens.clear();
           items.clear();
  
-        if (artigos != null) {
+            if (artigos != null) {
           // encomendaItens.clear();
           ivaTotal = totalVenda = subtotal = mercadServicValor = 0.0;
           encomendaItens.clear();
 
           artigos.forEach((a) {
-            mercadServicValor += a.preco * a.quantidade;
-            subtotal += (a.preco * (iva / 100)) + a.preco;
-            totalVenda += subtotal;
-            ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
+            if (a.pvp1Iva == true) {
+            noIva = (a.pvp1 / ((iva + 100) / 100) ) * a.quantidade;
+            mercadServicValor += (a.pvp1 / ((iva + 100) / 100) ) * a.quantidade ;
+
+            subtotal +=  a.pvp1 * a.quantidade;
+            totalVenda = subtotal;
+            ivaTotal = mercadServicValor * (iva / 100);
             encomendaItens.add(artigoEncomenda(a));
+
+
+
+
+            } else {
+            mercadServicValor += (a.pvp1 / ((iva + 100) / 100)  )  * a.quantidade;
+
+            subtotal +=  (a.pvp1 / ((iva + 100) / 100)  )  * a.quantidade;
+            totalVenda += subtotal;
+            ivaTotal += mercadServicValor * (iva / 100);
+            encomendaItens.add(artigoEncomenda(a));
+
+            }
             // encomendaItens.elementAt(0)
           });
         }

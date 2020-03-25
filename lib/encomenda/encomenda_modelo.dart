@@ -78,7 +78,7 @@ Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, 
         'artigos': artigos_json,
         'valorTotal':valorTotal,
         'estado':estado,
-        'data_hora':dataHora.toString(),
+        'dataHora':dataHora.toString(),
 
       };
   }

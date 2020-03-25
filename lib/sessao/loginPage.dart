@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:primobile/Database/Database.dart';
 import 'package:primobile/sessao/sessao_api_provider.dart';
-import 'package:primobile/usuario/usuario_modelo.dart';
+import 'package:connectivity/connectivity.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -108,43 +107,104 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () async {
                   String nome = txtNomeEmail.text.trim();
                   String senha = txtSenha.text.trim();
-
-                  bool rv = await SessaoApiProvider.login(nome, senha);
-                    // Usuario usuario = await DBProvider.db.login(nome, senha);
-
-                  if (rv == false ) {
-                    setState (() {
-                      boxDecoration = BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(color: Colors.red, blurRadius: 5)
-                          ]);
-                    });
+                  var conexaoResultado =
+                      await (Connectivity().checkConnectivity());
+                  if (conexaoResultado == ConnectivityResult.mobile ||
+                      conexaoResultado == ConnectivityResult.wifi) {
+                    int rv = await SessaoApiProvider.login(nome, senha);
+                    if (rv == 1) {
+                      setState(() {
+                        boxDecoration = BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(50)),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(color: Colors.red, blurRadius: 5)
+                            ]);
+                      });
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("atenção"),
+                            content: Text(
+                                "Erro de autenticação. Verificar o Nome e a Senha"),
+                            actions: <Widget>[
+                              new FlatButton(
+                                child: new Text("Fechar"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else if (rv == 2) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("atenção"),
+                            content: Text(
+                                "Erro de Conexão. Sem acesso a internet ou servidor não responde!"),
+                            actions: <Widget>[
+                              new FlatButton(
+                                child: new Text("Fechar"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }else if (rv == 3) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("atenção"),
+                            content: Text(
+                                "Ocorreu um erro desconhecido. Tentar novamente!"),
+                            actions: <Widget>[
+                              new FlatButton(
+                                child: new Text("Fechar"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } 
+                    else if (rv == 0) {
+                      txtNomeEmail.clear();
+                      txtSenha.clear();
+                      Navigator.pushNamed(context, '/menu');
+                    }
+                  } else {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return      AlertDialog(
-                        title: Text("atenção"),
-                        content: Text(
-                            "Erro de autenticação. Verificar o Nome e a Senha"),
-                            actions: <Widget>[
-                              new FlatButton(
+                        return AlertDialog(
+                          title: Text("atenção"),
+                          content: Text(
+                              "Erro de Conexão. Verificar se os Dados ou Wifi estão ligados!"),
+                          actions: <Widget>[
+                            new FlatButton(
                               child: new Text("Fechar"),
                               onPressed: () {
                                 Navigator.of(context).pop();
-                              },                            
+                              },
                             ),
-                            ],
+                          ],
                         );
                       },
                     );
-               
-                  } else {
-                    txtNomeEmail.clear();
-                    txtSenha.clear();
-                    Navigator.pushNamed(context, '/menu');
                   }
+
+                  // Usuario usuario = await DBProvider.db.login(nome, senha);
                 }),
           ),
         ],

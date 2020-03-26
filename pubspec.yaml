@@ -32,6 +32,7 @@ dependencies:
   dio: any
   shared_preferences:  "0.5.6"
   connectivity: "^0.4.8"
+  loading: "^1.0.2"
 
 dev_dependencies:
   flutter_test:

@@ -31,7 +31,8 @@ class SessaoApiProvider {
       return 1;
     }
     _save(response.body);
-      read();
+      var sessao = await read();
+      print(sessao);
     }  catch (e) {
       if (e.osError.errorCode == 111) {
         return 2;

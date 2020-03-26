@@ -127,24 +127,21 @@ class DBProvider {
     return res.length > 0 ? Usuario.fromMap(res[0]) : Usuario();
   }
 
-
   Future<Usuario> getUsuarioByName(String nome) async {
     final db = await database;
-    var res =
-        await db.query('Usuario', where: "nome = ?", whereArgs: [nome]);
+    var res = await db.query('Usuario', where: "nome = ?", whereArgs: [nome]);
 
     return res.length > 0 ? Usuario.fromMap(res[0]) : Usuario();
   }
 
-
-
   Future<Usuario> login(String nome_email, String senha) async {
     final db = await database;
-    var res =
-        await db.query('Usuario', where: "nome = ? and senha = ?", whereArgs: [nome_email, senha]);
+    var res = await db.query('Usuario',
+        where: "nome = ? and senha = ?", whereArgs: [nome_email, senha]);
 
     return res.length > 0 ? Usuario.fromMap(res[0]) : null;
   }
+
   getTodosArtigos() async {
     final db = await database;
     var res = await db.query('Artigo');
@@ -176,7 +173,7 @@ class DBProvider {
     final db = await database;
     var res;
     res = await db.query('Encomenda');
-    var  enc =
+    var enc =
         res.isNotEmpty ? res.map((c) => Encomenda.fromMap(c)).toList() : [];
 
     return enc;
@@ -200,7 +197,7 @@ class DBProvider {
     return enc;
   }
 
-   Future<List<EncomendaItem>> getEncomendaItem(int encomenda) async {
+  Future<List<EncomendaItem>> getEncomendaItem(int encomenda) async {
     final db = await database;
     var res = await db
         .query('EncomendaItem', where: "encomenda = ?", whereArgs: [encomenda]);
@@ -268,7 +265,7 @@ class DBProvider {
     try {
       res = await db.insert(
         "Artigo",
-        artigo.toMap(),
+        artigo.toMapDb(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     } catch (e) {
@@ -298,6 +295,8 @@ class DBProvider {
   }
 
   insertUsuario(Usuario usuario) async {
+    try {
+      
     final db = await database;
     var res = await db.insert(
       "Usuario",
@@ -305,9 +304,17 @@ class DBProvider {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return res;
+    } catch (e) {
+
+      throw e;
+    }
+
   }
 
   insertEncomenda(Encomenda encomenda) async {
+
+    try {
+      
     final db = await database;
     var res = await db.insert(
       "Encomenda",
@@ -319,24 +326,33 @@ class DBProvider {
 
     insertEncomendaItem(encomenda.artigos, res);
 
-    return res;
+    } catch (e) {
+
+      throw e;
+    }
+
+
   }
 
   void insertEncomendaItem(List<Artigo> artigos, int encomendaPk) async {
-    final db = await database;
-    artigos.forEach((artigo) async {
-      var res = await db.insert(
-        "EncomendaItem",
-        {
-          'encomenda': encomendaPk,
-          'artigo': artigo.artigo,
-          'valor_unit': artigo.preco,
-          'quantidade': artigo.quantidade,
-          'valor_total': artigo.preco * artigo.quantidade
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-      print('sucesso encomenda item $res');
-    });
+    try {
+      final db = await database;
+      artigos.forEach((artigo) async {
+        var res = await db.insert(
+          "EncomendaItem",
+          {
+            'encomenda': encomendaPk,
+            'artigo': artigo.artigo,
+            'valor_unit': artigo.preco,
+            'quantidade': artigo.quantidade,
+            'valor_total': artigo.preco * artigo.quantidade
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+        print('sucesso encomenda item $res');
+      });
+    } catch (e) {
+      throw e;
+    }
   }
 }

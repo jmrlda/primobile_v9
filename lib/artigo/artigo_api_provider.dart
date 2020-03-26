@@ -5,7 +5,7 @@ import 'package:primobile/sessao/sessao_api_provider.dart';
 import 'artigo_modelo.dart';
 
 class ArtigoApiProvider {
-  void getTodosArtigos() async {
+  Future getTodosArtigos() async {
     // var url = 'http://127.0.0.1:3000/artigos';
     // var url = 'https://2b1e04b0.ngrok.io/api/artigo/';
   Map<String, dynamic> parsed = await SessaoApiProvider.read();
@@ -31,7 +31,7 @@ class ArtigoApiProvider {
 
   }
 
-  void insertArtigo(List<Artigo> artigos) async {
+  Future insertArtigo(List<Artigo> artigos) async {
 
     for (Artigo a in artigos) {
       await DBProvider.db.insertArtigo(a);

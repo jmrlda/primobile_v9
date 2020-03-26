@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:primobile/Database/Database.dart';
 import 'package:primobile/artigo/artigo_api_provider.dart';
 import 'package:primobile/cliente/cliente_api_provider.dart';
 import 'package:primobile/menu/opcoes.dart';
-import 'package:primobile/usuario/usuario_api_provider.dart';
+import 'package:loading/loading.dart';
+import 'package:loading/indicator/ball_pulse_indicator.dart';
 
 class MenuPage extends StatefulWidget {
   MenuPage({Key key}) : super(key: key);
@@ -14,6 +14,7 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   @override
+  // bool is_loading = false;
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: new AppBar(
@@ -41,7 +42,7 @@ class _MenuPageState extends State<MenuPage> {
             children: <Widget>[
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 3.0,
+                height: MediaQuery.of(context).size.height / 3.5,
                 decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.only(
@@ -61,17 +62,20 @@ class _MenuPageState extends State<MenuPage> {
                   ],
                 ),
               ),
-
-              // container menu body
-              Container(
-                width: MediaQuery.of(context).size.width - 16,
-                height: MediaQuery.of(context).size.height / 2,
-                margin: EdgeInsets.only(top: 64),
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  children: menuItemView(),
-                ),
-              ),
+              Stack(
+                children: <Widget>[
+                  // container menu body
+                  Container(
+                    width: MediaQuery.of(context).size.width - 16,
+                    height: MediaQuery.of(context).size.height / 2,
+                    margin: EdgeInsets.only(top: 64),
+                    child: GridView.count(
+                      crossAxisCount: 3,
+                      children: menuItemView(),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ));
@@ -154,22 +158,52 @@ class _MenuPageState extends State<MenuPage> {
       ),
     ];
   }
-}
 
-void opcaoAcao(String opcao) {
-  if (opcao == 'sincronizar') {
-    _loadFromApi();
+  void opcaoAcao(String opcao) async {
+    if (opcao == 'sincronizar') {
+     await _loadFromApi();
+
+
+    }
   }
-}
 
-void _loadFromApi() async {
+  Future _loadFromApi() async {
+          bool is_loading = true;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return  WillPopScope(child: AlertDialog(
+        
+          title: Container(
+            child: Text("Sincronizando Aguarde ..." + is_loading.toString()),
+          ),
+          content: Loading(
+                  indicator: BallPulseIndicator(),
+                  color: Colors.blueAccent),
+          actions: <Widget>[],
+        ),
+         onWillPop: () async => false,
+        );
+          },
+        );
+      },
+    );
     var artigoApi = ArtigoApiProvider();
     var clienteApi = ClienteApiProvider();
-  try {
-    artigoApi.getTodosArtigos();
-    clienteApi.getTodosClientes();
+    try {
+      await artigoApi.getTodosArtigos();
+      await clienteApi.getTodosClientes();
+      setState(() {
+             is_loading = false;
 
-  } catch (e) {
-    print('Erro: $e.message');
+      });
+    } catch (e) {
+      print('Erro: $e.message');
+    }
   }
 }

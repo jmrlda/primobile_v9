@@ -286,54 +286,11 @@ class _EncomendaPageState extends State<EncomendaPage> {
             arguments: artigos);
         artigos = result;
 
-        /** 
-         * Se tiver artigos selecionados.
-        *   limpar a lista artigos previamente selecionados
-        **/
-
         refresh2();
-        // if (result != null) {
-        //   encomendaItens.clear();
-        //   items.clear();
-        // }
-
-        // if (artigos != null) {
-        //   // encomendaItens.clear();
-        //   ivaTotal = totalVenda = subtotal = mercadServicValor = 0.0;
-        //   encomendaItens.clear();
-
-        //   artigos.forEach((a) {
-        //     if (a.pvp1Iva == true) {
-        //     mercadServicValor += (a.pvp1 / ((iva + 100) / 100) ) * a.quantidade ;
-
-        //     subtotal +=  a.pvp1 * a.quantidade;
-        //     totalVenda += subtotal;
-        //     ivaTotal += mercadServicValor * (iva / 100);
-        //     encomendaItens.add(artigoEncomenda(a));
-
-
-
-
-        //     } else {
-        //     mercadServicValor += (a.pvp1 / ((iva + 100) / 100)  )  * a.quantidade;
-
-        //     subtotal +=  (a.pvp1 / ((iva + 100) / 100)  )  * a.quantidade;
-        //     totalVenda += subtotal;
-        //     ivaTotal = mercadServicValor * (iva / 100);
-        //     encomendaItens.add(artigoEncomenda(a));
-
-        //     }
-        //     // encomendaItens.elementAt(0)
-        //   });
-        // }
-        // setState(() {
-        // items.addAll(encomendaItens);
-          
-        // });
-      }
+    
 
       // Terminar
-      if (index == 2) {
+      } if (index == 2) {
         if (artigos.length > 0) {
           print("total iva $ivaTotal");
           EncomendapiProvider encomendaApi = EncomendapiProvider();
@@ -353,8 +310,31 @@ class _EncomendaPageState extends State<EncomendaPage> {
               dataHora: DateTime.now(), 
               estado: "pendente",
               valorTotal: totalVenda);
-          // encomendaApi.insertEncomenda(encomenda);
-          await encomendaApi.postEncomenda(encomenda);
+
+              try {
+                encomendaApi.insertEncomenda(encomenda);
+                await encomendaApi.postEncomenda(encomenda);
+
+              } catch (e) {
+                  showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("atenção"),
+                            content: Text(
+                                "Ocorreu um erro. " + e.toString()),
+                            actions: <Widget>[
+                              new FlatButton(
+                                child: new Text("Fechar"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+              }
 
           Navigator.pushNamed(contexto, '/encomenda_sucesso');
           // limpar a lista de itens apos envio ou salvo na baese de dados;
@@ -374,6 +354,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
       _selectedIndex = index;
     });
   }
+  
 
   ArtigoCard encomendaItem(Artigo artigo) {
     var artigoQuantidade;
@@ -491,32 +472,6 @@ class _EncomendaPageState extends State<EncomendaPage> {
       ),
     );
   }
-
-// void refresh() {
-
-
-//                     // calcular o custo da encomenda que pode ter preco
-//                     // ja incluido iva ou nao. 
-//                     // Verificar o caso e calcular o custo total.
-                    
-
-//                     if (artigos != null) {
-//                       ivaTotal =
-//                           totalVenda = subtotal = mercadServicValor = 0.0;
-
-//                       artigos.forEach((a) {
-//                         mercadServicValor += a.preco * a.quantidade;
-//                         subtotal += ((a.preco * a.quantidade) * (iva / 100)) +
-//                             (a.preco * a.quantidade);
-//                         totalVenda += subtotal;
-//                         ivaTotal += ((a.preco * a.quantidade) * (iva / 100));
-//                         encomendaItens.add(artigoEncomenda(a));
-//                         // encomendaItens.elementAt(0)
-//                       });
-//                     }
-//                   }
-
-
   void refresh2() {
      /** 
          * Se tiver artigos selecionados.

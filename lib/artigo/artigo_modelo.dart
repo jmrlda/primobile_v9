@@ -89,6 +89,27 @@ class Artigo {
         'pvp6Iva': pvp6Iva == true ? 1 : 0,
       };
 
+  Map<String, dynamic> toMapDb() => {
+        'artigo': artigo,
+        'descricao': descricao,
+        'preco': preco,
+        'quantidadeStock': quantidadeStock,
+        'civa': civa,
+        'iva': iva,
+        'unidade': unidade,
+        'pvp1': pvp1,
+        'pvp1Iva': pvp1Iva == true ? 1 : 0,
+        'pvp2': pvp2,
+        'pvp2Iva': pvp2Iva == true ? 1 : 0,
+        'pvp3': pvp3,
+        'pvp3Iva': pvp3Iva == true ? 1 : 0,
+        'pvp4': pvp4,
+        'pvp4Iva': pvp4Iva == true ? 1 : 0,
+        'pvp5': pvp5,
+        'pvp5Iva': pvp5Iva == true ? 1 : 0,
+        'pvp6': pvp6,
+        'pvp6Iva': pvp6Iva == true ? 1 : 0,
+      };
   factory Artigo.fromJson(Map<String, dynamic> data) {
     return Artigo(
         artigo: data['artigo'],

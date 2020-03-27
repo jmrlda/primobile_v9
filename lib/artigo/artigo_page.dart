@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:primobile/Database/Database.dart';
 import 'artigo_modelo.dart';
+import 'package:loading/loading.dart';
+import 'package:loading/indicator/ball_pulse_indicator.dart';
 
 class ArtigoPage extends StatefulWidget {
   ArtigoPage({Key key, this.title}) : super(key: key);
@@ -124,13 +126,15 @@ Widget listaArtigo() {
         return  ListView(
           children: <Widget>[
             SizedBox(
-              child: CircularProgressIndicator(),
+               
+              child: Loading(
+                    indicator: BallPulseIndicator(), color: Colors.blueAccent, size: 10.0,),
               width: 60,
               height: 60,
             ),
             const Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text('Aguardando resultado...'),
+              padding: EdgeInsets.only(top: 36),
+              child: Center(child: Text('Aguardando resultado...'),),
             )
           ],
         );

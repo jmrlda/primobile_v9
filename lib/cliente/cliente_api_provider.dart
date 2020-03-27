@@ -7,8 +7,9 @@ import 'cliente_modelo.dart';
 
 
 class ClienteApiProvider {
+  bool sincronizado = false;
 
-Future<List<Cliente>> getTodosClientes() async {
+void  getTodosClientes() async {
     // var url = 'https://2b1e04b0.ngrok.io/api/cliente';
   Map<String, dynamic> parsed = await SessaoApiProvider.read();
   Map<String, dynamic> filial = parsed['resultado'];
@@ -16,26 +17,29 @@ Future<List<Cliente>> getTodosClientes() async {
   String host = filial['empresa_filial']['ip'];
   String rota = '/api/cliente';
   var url = protocolo + host + rota;    
+
     Response response;
 
     try {
+
+            sincronizado = false;
      response = await Dio().get( url,  options: Options(
        headers: {
          "x-access-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwZXJmaWwiOiJhZG1pbiIsIm5vbWUiOiJqbXJhZG1pbiIsImlhdCI6MTU3ODQ5NDY5NCwiZXhwIjoxNTc4NDk0OTk0fQ.SwrH7RQT3TbbIUzaaQe6ZSVkiSlagB_WItc3fqqwm1E'
        }
      ) );
-      
-      print('response');
-      print(response);
+
     } on DioError catch (e) {
-      print(e?.response);
+      print("[ClienteApiProvider]ERRO: $e");
       return null;
     }
 
-    return (response.data as List).map((cliente) {
+    var rv =  (response.data as List).map((cliente) async  {
       print('cliente: $cliente');
-      DBProvider.db.insertCliente(Cliente.fromJson(cliente));
+      await DBProvider.db.insertCliente(Cliente.fromJson(cliente));
     }).toList();
+
+      sincronizado = true;
   }
 
 

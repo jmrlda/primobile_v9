@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:primobile/Database/Database.dart';
-
+import 'package:loading/loading.dart';
+import 'package:loading/indicator/ball_pulse_indicator.dart';
 import 'artigo_modelo.dart';
 
 class ArtigoSelecionarPage extends StatefulWidget {
@@ -162,9 +163,21 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
         if ((snap.connectionState == ConnectionState.none &&
                 snap.hasData == null ||
             snap.connectionState == ConnectionState.waiting)) {
-          return Container(
-            child: CircularProgressIndicator(),
-          );
+          return ListView(
+          children: <Widget>[
+            SizedBox(
+               
+              child: Loading(
+                    indicator: BallPulseIndicator(), color: Colors.blueAccent, size: 10.0,),
+              width: 60,
+              height: 60,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(top: 36),
+              child: Center(child: Text('Aguardando resultado...'),),
+            )
+          ],
+        );
         } else if (snap.connectionState == ConnectionState.done) {
           if (snap.hasError) {
             return Text('Erro: ${snap.error}');

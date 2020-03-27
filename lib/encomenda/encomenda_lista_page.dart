@@ -7,7 +7,8 @@ import 'package:primobile/Database/Database.dart';
 import 'package:primobile/encomenda/encomendaItem_modelo.dart';
 import 'package:primobile/encomenda/encomenda_modelo.dart';
 import 'package:primobile/encomenda/encomenda_nova_page.dart';
-
+import 'package:loading/loading.dart';
+import 'package:loading/indicator/ball_pulse_indicator.dart';
 import 'encomenda_api_provider.dart';
 
 class EncomendaListaPage extends StatelessWidget {
@@ -112,14 +113,16 @@ class ChoiceCard extends StatelessWidget {
           ];
         } else {
           children = <Widget>[
-            SizedBox(
-              child: CircularProgressIndicator(),
+           SizedBox(
+               
+              child: Loading(
+                    indicator: BallPulseIndicator(), color: Colors.blueAccent, size: 10.0,),
               width: 60,
               height: 60,
             ),
             const Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text('Aguardando resultado...'),
+              padding: EdgeInsets.only(top: 36),
+              child: Center(child: Text('Aguardando resultado...'),),
             )
           ];
         }

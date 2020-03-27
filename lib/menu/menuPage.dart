@@ -13,8 +13,13 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
+      bool is_loading = true;
+      var artigoApi = ArtigoApiProvider();
+      var clienteApi = ClienteApiProvider();
+      bool artigo_sincronizado = false;
+      bool cliente_sincronizado = false;
+
   @override
-  // bool is_loading = false;
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: new AppBar(
@@ -161,47 +166,50 @@ class _MenuPageState extends State<MenuPage> {
 
   void opcaoAcao(String opcao) async {
     if (opcao == 'sincronizar') {
-     await _loadFromApi();
-
-
+      await _loadFromApi();
     }
   }
 
   Future _loadFromApi() async {
-          bool is_loading = true;
 
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-
         return StatefulBuilder(
           builder: (context, setState) {
-            return  WillPopScope(child: AlertDialog(
-        
-          title: Container(
-            child: Text("Sincronizando Aguarde ..." + is_loading.toString()),
-          ),
-          content: Loading(
-                  indicator: BallPulseIndicator(),
-                  color: Colors.blueAccent),
-          actions: <Widget>[],
-        ),
-         onWillPop: () async => false,
-        );
+            new Future.delayed(new Duration(seconds: 3), () {
+                                            
+
+              setState(() {
+               if (clienteApi.sincronizado == true &&
+                  artigoApi.sincronizado == true ) {
+                       Navigator.of(context).pop();
+
+                  }
+              });
+            });
+
+            return WillPopScope(
+              child: AlertDialog(
+                title: Container(
+                  child:
+                      Text("Sincronizando Aguarde ..."),
+                ),
+                content: Loading(
+                    indicator: BallPulseIndicator(), color: Colors.blueAccent),
+                actions: <Widget>[],
+              ),
+              onWillPop: () async => false,
+            );
           },
         );
       },
     );
-    var artigoApi = ArtigoApiProvider();
-    var clienteApi = ClienteApiProvider();
-    try {
-      await artigoApi.getTodosArtigos();
-      await clienteApi.getTodosClientes();
-      setState(() {
-             is_loading = false;
 
-      });
+    try {
+         artigoApi.getTodosArtigos();
+         clienteApi.getTodosClientes();
     } catch (e) {
       print('Erro: $e.message');
     }

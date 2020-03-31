@@ -31,6 +31,7 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
   void filterSearchResults(String query) {
     List<_ListaTile> dummySearchList = List<_ListaTile>();
     dummySearchList.addAll(duplicateItems);
+    
     if (query.isNotEmpty) {
       List<_ListaTile> dummyListData = List<_ListaTile>();
       dummySearchList.forEach((item) {
@@ -61,7 +62,7 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
     bool existe = false;
 
 
-    setState(() {
+    setState(() { 
       for (var i = 0; i < listaArtigoSelecionado.length; i++) {
       if (listaArtigoSelecionado[i].artigo == a.artigo) {
         existe = true;

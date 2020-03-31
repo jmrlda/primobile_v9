@@ -4,6 +4,7 @@ import 'package:primobile/cliente/cliente_api_provider.dart';
 import 'package:primobile/menu/opcoes.dart';
 import 'package:loading/loading.dart';
 import 'package:loading/indicator/ball_pulse_indicator.dart';
+import 'package:primobile/sessao/loginPage.dart';
 
 class MenuPage extends StatefulWidget {
   MenuPage({Key key}) : super(key: key);
@@ -167,6 +168,8 @@ class _MenuPageState extends State<MenuPage> {
   void opcaoAcao(String opcao) async {
     if (opcao == 'sincronizar') {
       await _loadFromApi();
+    } else if (opcao == 'sair' ) {
+              Navigator.pushReplacementNamed(context, '/' );
     }
   }
 

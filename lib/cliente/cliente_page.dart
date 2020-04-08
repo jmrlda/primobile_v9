@@ -121,20 +121,17 @@ Widget listaCliente() {
       if ((snap.connectionState == ConnectionState.none &&
               snap.hasData == null) ||
           snap.connectionState == ConnectionState.waiting) {
-      return  ListView(
-          children: <Widget>[
+      return  Center(
+          child: 
             SizedBox(
                
               child: Loading(
                     indicator: BallPulseIndicator(), color: Colors.blueAccent, size: 10.0,),
-              width: 60,
-              height: 60,
+              width: 250,
+              height: 100,
             ),
-            const Padding(
-              padding: EdgeInsets.only(top: 36),
-              child: Center(child: Text('Aguardando resultado...'),),
-            )
-          ],
+    
+          
         );
       } else if (snap.connectionState == ConnectionState.done) {
         if (snap.hasError) {

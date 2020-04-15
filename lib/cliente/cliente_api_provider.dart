@@ -34,7 +34,7 @@ void  getTodosClientes() async {
       return null;
     }
 
-    var rv =  (response.data as List).map((cliente) async  {
+   (response.data as List).map((cliente) async  {
       print('cliente: $cliente');
       await DBProvider.db.insertCliente(Cliente.fromJson(cliente));
     }).toList();

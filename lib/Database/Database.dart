@@ -142,7 +142,7 @@ class DBProvider {
     return res.length > 0 ? Usuario.fromMap(res[0]) : null;
   }
 
-  getTodosArtigos() async {
+      Future<List<Artigo>>  getTodosArtigos() async {
     final db = await database;
     var res = await db.query('Artigo');
     List<Artigo> artigos =

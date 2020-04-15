@@ -4,6 +4,11 @@ import 'package:loading/loading.dart';
 import 'package:loading/indicator/ball_pulse_indicator.dart';
 import 'artigo_modelo.dart';
 
+
+ List<Artigo> artigos = new  List<Artigo> ();
+    List<Artigo> artigosDuplicado = new  List<Artigo> ();
+
+
 class ArtigoSelecionarPage extends StatefulWidget {
  List<Artigo> artigos;
 
@@ -25,31 +30,37 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
   @override
   void initState() {
     super.initState();
+       getArtigos().then((value) => setState(() {
+       artigos = value;
+     }) );
 
   }
 
   void filterSearchResults(String query) {
-    List<_ListaTile> dummySearchList = List<_ListaTile>();
-    dummySearchList.addAll(duplicateItems);
-    
-    if (query.isNotEmpty) {
-      List<_ListaTile> dummyListData = List<_ListaTile>();
+     List<Artigo> dummySearchList = List<Artigo>();
+
+    dummySearchList.addAll(artigosDuplicado);
+    if (query.trim().isNotEmpty) {
+      List<Artigo> dummyListData = List<Artigo>();
       dummySearchList.forEach((item) {
-        if (item.contem(query)) {
+        if (item.descricao.toLowerCase().contains(query.toString())
+        ||  item.artigo.toLowerCase().contains(query.toString())
+        ) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        items.clear();
-        items.addAll(dummyListData);
+        artigos.clear();
+        artigos = dummyListData;
       });
       return;
     } else {
-      setState(() {
-        items.clear();
-        items.addAll(duplicateItems);
+            setState(() {
+        artigos.clear();
+        artigos = dummySearchList;
       });
-    }
+
+    } 
   }
 
   bool isSelected = false;
@@ -91,10 +102,14 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
 
   @override
   Widget build(BuildContext context) {
-        widget.artigos = ModalRoute.of(context).settings.arguments;
-    if (widget.artigos !=  null) {
-      listaArtigoSelecionado = widget.artigos;
-    }
+    //     widget.artigos = ModalRoute.of(context).settings.arguments;
+    // if (widget.artigos !=  null) {
+    //   listaArtigoSelecionado = widget.artigos;
+    // }
+
+       getArtigos().then((value) => setState(() {
+       artigosDuplicado = value;
+     }) );
     return new Scaffold(
       appBar: new AppBar(
         backgroundColor: Colors.blue,
@@ -158,76 +173,75 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
   }
 
   Widget listaArtigo() {
-    return FutureBuilder(
-      future: getTodosArtigos(),
-      builder: (context, snap) {
-        if ((snap.connectionState == ConnectionState.none &&
-                snap.hasData == null ||
-            snap.connectionState == ConnectionState.waiting)) {
-          return ListView(
-          children: <Widget>[
-            SizedBox(
-               
-              child: Loading(
-                    indicator: BallPulseIndicator(), color: Colors.blueAccent, size: 10.0,),
-              width: 60,
-              height: 60,
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 36),
-              child: Center(child: Text('Aguardando resultado...'),),
-            )
-          ],
-        );
-        } else if (snap.connectionState == ConnectionState.done) {
-          if (snap.hasError) {
-            return Text('Erro: ${snap.error}');
-          }
-          return new ListView.builder(
-            itemCount: snap.data.length,
-            itemBuilder: (context, index) {
-              Artigo artigo = snap.data[index];
 
-              return new Card(
-                color: existeArtigo(artigo) == false ? Colors.white : Colors.red,
-                child: _ListaTile(
-                  selected: isSelected,
-                  onTap:  () {
-                    adicionarArtigo(artigo);
-                  },
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.blue,
-                    child: Icon(
-                      Icons.local_offer,
-                      color: Colors.white,
-                    ),
-                  ),
-                  title: Text(
-                    artigo.descricao,
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    artigo.artigo +
-                        ' ' +
-                        artigo.unidade +
-                        ', ' +
-                        artigo.preco.toString() +
-                        ' MT',
-                    style: TextStyle(color: Colors.blueAccent, fontSize: 16),
-                  ),
-                  data: artigo.descricao,
+    
+        if (artigos == null || artigos.length <= 0) {
+      return Container(
+              child: _ListaTile(
+                title: Align (
+                  alignment: Alignment.topCenter,
+
+                  child: Text(
+                  "Artigo não encontrado",
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 20,
+                      ),
                 ),
-              );
-            },
-          );
-        }
-        return Text('Ocorreu um erro desconhecido: ${snap.error}');
-      },
-    );
+                )
+
+                
+    
+              ),
+            );          
+        } else {
+       return  Scrollbar(
+                isAlwaysShown: true,
+                child: ListView.builder(
+            itemCount: artigos.length,
+              itemBuilder: (context, index) {
+              Artigo artigo = artigos[index];
+
+                return new Card(
+                  color: existeArtigo(artigo) == false ? Colors.white : Colors.red,
+                  child: _ListaTile(
+                    selected: isSelected,
+                    onTap:  () {
+                      adicionarArtigo(artigo);
+                    },
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.blue,
+                      child: Icon(
+                        Icons.local_offer,
+                        color: Colors.white,
+                      ),
+                    ),
+                    title: Text(
+                      artigo.descricao,
+                      style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      artigo.artigo +
+                          ' ' +
+                          artigo.unidade +
+                          ', ' +
+                          artigo.preco.toString() +
+                          ' MT',
+                      style: TextStyle(color: Colors.blueAccent, fontSize: 16),
+                    ),
+                    data: artigo.descricao,
+                  ),
+                );
+              },
+            ),
+       );
+
+          }
   }
+   
 }
 
 class _ListaTile extends ListTile {
@@ -280,7 +294,8 @@ class _ListaTile extends ListTile {
   }
 }
 
-Future getTodosArtigos() async {
-  var res = await DBProvider.db.getTodosArtigos();
+Future<List<Artigo>> getArtigos() async {
+  List<Artigo>  res = await DBProvider.db.getTodosArtigos();
+
   return res;
 }

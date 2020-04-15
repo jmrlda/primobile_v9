@@ -5,6 +5,11 @@ import 'package:loading/loading.dart';
 import 'package:loading/indicator/ball_pulse_indicator.dart';
 
 
+
+    List<Cliente> clientes = new  List<Cliente> ();
+    List<Cliente> clientesDuplicado = new  List<Cliente> ();
+
+
 class ClienteSelecionarPage extends StatefulWidget {
   ClienteSelecionarPage({Key key, this.title}) : super(key: key);
   final String title;
@@ -22,33 +27,45 @@ class _ClienteSelecionarPageState extends State<ClienteSelecionarPage> {
   @override
   void initState() {
     super.initState();
+
+        getClientes().then((value) => setState(() {
+       clientes = value;
+     }) );    
   }
 
   void filterSearchResults(String query) {
-    List<_ListaTile> dummySearchList = List<_ListaTile>();
-    dummySearchList.addAll(duplicateItems);
-    if (query.isNotEmpty) {
-      List<_ListaTile> dummyListData = List<_ListaTile>();
+     List<Cliente> dummySearchList = List<Cliente>();
+
+    dummySearchList.addAll(clientesDuplicado);
+    if (query.trim().isNotEmpty) {
+      List<Cliente> dummyListData = List<Cliente>();
       dummySearchList.forEach((item) {
-        if (item.contem(query)) {
+        if (item.nome.toLowerCase().contains(query.toString())
+        ||  item.cliente.toLowerCase().contains(query.toString())
+        ) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        items.clear();
-        items.addAll(dummyListData);
+        clientes.clear();
+        clientes = dummyListData;
       });
       return;
     } else {
-      setState(() {
-        items.clear();
-        items.addAll(duplicateItems);
+            setState(() {
+        clientes.clear();
+        clientes = dummySearchList;
       });
-    }
+
+    } 
   }
 
   @override
   Widget build(BuildContext context) {
+
+            getClientes().then((value) => setState(() {
+       clientesDuplicado = value;
+     }) );
     return new Scaffold(
       appBar: new AppBar(
         backgroundColor: Colors.blue,
@@ -106,83 +123,78 @@ class _ClienteSelecionarPageState extends State<ClienteSelecionarPage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.sync),
-        onPressed: () async {
-        },
-      ),
+ 
     );
   }
 }
 
 Widget listaCliente() {
-  return FutureBuilder(
-    future: teste(),
-    builder: (context, snap) {
-      if ((snap.connectionState == ConnectionState.none &&
-              snap.hasData == null) ||
-          snap.connectionState == ConnectionState.waiting) {
-        return ListView(
-          children: <Widget>[
-            SizedBox(
-               
-              child: Loading(
-                    indicator: BallPulseIndicator(), color: Colors.blueAccent, size: 10.0,),
-              width: 60,
-              height: 60,
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 36),
-              child: Center(child: Text('Aguardando resultado...'),),
-            )
-          ],
-        );
-      } else if (snap.connectionState == ConnectionState.done) {
-        if (snap.hasError) {
-          return Text('Erro: ${snap.error}');
-        }
-        return ListView.builder(
-          itemCount: snap.data.length,
-          itemBuilder: (context, index) {
-            Cliente cliente = snap.data[index];
-            return Container(
+
+
+        if (clientes == null || clientes.length <= 0) {
+      return Container(
               child: _ListaTile(
-              onTap: () {
-                Navigator.pop(context, cliente);
-              },
-                leading: CircleAvatar(
-                  backgroundColor: Colors.blue,
-                  child: Icon(
-                    Icons.local_offer,
-                    color: Colors.white,
-                  ),
-                ),
-                title: Text(
-                  cliente.nome,
+                title: Align (
+                  alignment: Alignment.topCenter,
+
+                  child: Text(
+                  "Cliente não encontrado",
                   style: TextStyle(
                       color: Colors.blue,
                       fontSize: 20,
-                      fontWeight: FontWeight.bold),
+                      ),
                 ),
-                subtitle: Text(
-                  cliente.endereco.descricao +
-                      ' - ' +
-                      cliente.numContrib.toString() 
-                      ,
-                  style: TextStyle(color: Colors.blueAccent, fontSize: 16),
-                ),
-                data: cliente,
+                )
+
+                
+    
               ),
-            );
-          },
+            );          
+        } else {
+
+        return Scrollbar(
+          isAlwaysShown: true,
+                  child: ListView.builder(
+            itemCount: clientes.length,
+            itemBuilder: (context, index) {
+              Cliente cliente = clientes[index];
+              return Container(
+                child: _ListaTile(
+                onTap: () {
+                  Navigator.pop(context, cliente);
+                },
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.blue,
+                    child: Icon(
+                      Icons.local_offer,
+                      color: Colors.white,
+                    ),
+                  ),
+                  title: Text(
+                    cliente.nome,
+                    style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    cliente.endereco.descricao +
+                        ' - ' +
+                        cliente.numContrib.toString() 
+                        ,
+                    style: TextStyle(color: Colors.blueAccent, fontSize: 16),
+                  ),
+                  data: cliente,
+                ),
+              );
+            },
+          ),
         );
-      }
-      return Text('Ocorreu um erro desconhecido: ${snap.error}');
-    },
-  );
+  
 }
 
-
+       }
+ 
 
 class _ListaTile extends ListTile {
   _ListaTile(
@@ -234,7 +246,7 @@ class _ListaTile extends ListTile {
   }
 }
 
-Future teste() async {
+Future getClientes() async {
   var res = await DBProvider.db.getTodosClientes();
 
   return res;

@@ -169,16 +169,24 @@ class DBProvider {
     return clientes;
   }
 
-  dynamic getTodasEncomendas() async {
+  // dynamic getTodasEncomendas() async {
+  //   final db = await database;
+  //   var res;
+  //   res = await db.query('Encomenda');
+  //   var enc =
+  //       res.isNotEmpty ? res.map((c) => Encomenda.fromMap(c)).toList() : [];
+
+  //   return enc;
+  // }
+
+  Future<List<Encomenda>> getTodasEncomendas() async {
     final db = await database;
-    var res;
-    res = await db.query('Encomenda');
-    var enc =
+    var res = await db.query('Encomenda');
+    List<Encomenda> encomenda =
         res.isNotEmpty ? res.map((c) => Encomenda.fromMap(c)).toList() : [];
 
-    return enc;
+    return encomenda;
   }
-
   Future<Encomenda> getEncomenda(int encomenda) async {
     final db = await database;
     var res =
@@ -190,7 +198,6 @@ class DBProvider {
   dynamic getTodasEncomendaItens() async {
     final db = await database;
     var res = await db.query('EncomendaItem');
-
     var enc =
         res.isNotEmpty ? res.map((c) => EncomendaItem.fromMap(c)).toList() : [];
 

@@ -4,10 +4,9 @@ import 'artigo_modelo.dart';
 import 'package:loading/loading.dart';
 import 'package:loading/indicator/ball_pulse_indicator.dart';
 
-    List<Artigo> artigos = new  List<Artigo> ();
+    List<Artigo> artigos = null; //new  List<Artigo> ();
     List<Artigo> artigosDuplicado = new  List<Artigo> ();
-
-    Future<List<Artigo>> items = getArtigos();
+    bool carregado = false;
 
 class ArtigoPage extends StatefulWidget {
   ArtigoPage({Key key, this.title}) : super(key: key);
@@ -26,6 +25,7 @@ class _ArtigoPageState extends State<ArtigoPage> {
     super.initState();
     getArtigos().then((value) => setState(() {
        artigos = value;
+       carregado = true;
      }) );
 
   }
@@ -46,12 +46,15 @@ class _ArtigoPageState extends State<ArtigoPage> {
       setState(() {
         artigos.clear();
         artigos = dummyListData;
+        carregado = true;
       });
       return;
     } else {
             setState(() {
         artigos.clear();
         artigos = dummySearchList;
+                carregado = true;
+
       });
 
     } 
@@ -62,6 +65,8 @@ class _ArtigoPageState extends State<ArtigoPage> {
      getArtigos().then((value) => setState(() {
       //  artigos = value;
        artigosDuplicado = value;
+               carregado = true;
+
      }) );
     return new Scaffold(
       appBar: new AppBar(
@@ -130,6 +135,13 @@ Widget listarArtigo() {
 
 
         if (artigos == null || artigos.length <= 0) {
+
+          if ( carregado == false ) {
+            return Container(
+              child: CircularProgressIndicator(),
+            );
+          }
+
       return Container(
               child: _ListaTile(
                 title: Align (

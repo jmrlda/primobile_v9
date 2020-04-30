@@ -5,7 +5,7 @@ import 'package:loading/indicator/ball_pulse_indicator.dart';
 import 'artigo_modelo.dart';
 
 
- List<Artigo> artigos = new  List<Artigo> ();
+ List<Artigo> artigoLista = new  List<Artigo> ();
     List<Artigo> artigosDuplicado = new  List<Artigo> ();
 
 
@@ -31,7 +31,7 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
   void initState() {
     super.initState();
        getArtigos().then((value) => setState(() {
-       artigos = value;
+       artigoLista = value;
      }) );
 
   }
@@ -50,14 +50,14 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
         }
       });
       setState(() {
-        artigos.clear();
-        artigos = dummyListData;
+        artigoLista.clear();
+        artigoLista = dummyListData;
       });
       return;
     } else {
             setState(() {
-        artigos.clear();
-        artigos = dummySearchList;
+        artigoLista.clear();
+        artigoLista = dummySearchList;
       });
 
     } 
@@ -102,10 +102,10 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
 
   @override
   Widget build(BuildContext context) {
-    //     widget.artigos = ModalRoute.of(context).settings.arguments;
-    // if (widget.artigos !=  null) {
-    //   listaArtigoSelecionado = widget.artigos;
-    // }
+        widget.artigos = ModalRoute.of(context).settings.arguments;
+    if (widget.artigos !=  null) {
+      listaArtigoSelecionado = widget.artigos;
+    }
 
        getArtigos().then((value) => setState(() {
        artigosDuplicado = value;
@@ -175,7 +175,7 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
   Widget listaArtigo() {
 
     
-        if (artigos == null || artigos.length <= 0) {
+        if (artigoLista == null || artigoLista.length <= 0) {
       return Container(
               child: _ListaTile(
                 title: Align (
@@ -198,9 +198,9 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
        return  Scrollbar(
                 isAlwaysShown: true,
                 child: ListView.builder(
-            itemCount: artigos.length,
+            itemCount: artigoLista.length,
               itemBuilder: (context, index) {
-              Artigo artigo = artigos[index];
+              Artigo artigo = artigoLista[index];
 
                 return new Card(
                   color: existeArtigo(artigo) == false ? Colors.white : Colors.red,

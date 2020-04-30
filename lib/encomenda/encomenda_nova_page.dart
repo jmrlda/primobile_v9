@@ -69,7 +69,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
           children: <Widget>[
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 300,
+              height: 285,
               decoration: BoxDecoration(
                 color: Colors.blue[900], // fromRGBO(7, 89, 250, 100)
                 // gradient: LinearGradient(
@@ -80,7 +80,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 5),
+                    margin: EdgeInsets.only(top: 2, bottom:  0),
                     // color: Colors.red,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -97,13 +97,12 @@ class _EncomendaPageState extends State<EncomendaPage> {
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width / 1.2,
+                    width: MediaQuery.of(context).size.width - 30,
                     height: 200,
-                    // margin: EdgeInsets.only(top: 64),/s
                     padding: EdgeInsets.only(
-                        top: 4, left: 16, right: 16, bottom: 20),
+                        top: 5, left: 16, right: 16, bottom: 20),
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
@@ -123,14 +122,14 @@ class _EncomendaPageState extends State<EncomendaPage> {
                             Text(
                               "Mercad/Servico",
                               style: TextStyle(
-                                  fontSize: 18, color: Colors.blue[300]),
+                                  fontSize: 18, color: Colors.blue),
                             ),
                             Text(
                               mercadServicValor.toStringAsFixed(2).toString() +
                                   "\n",
                               style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.blueAccent,
+                                  color: Colors.blue,
                                   fontWeight: FontWeight.bold),
                             )
                           ],
@@ -143,7 +142,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                               "IVA",
                               style: TextStyle(
                                 fontSize: 18,
-                                color: Colors.blue[300],
+                                color: Colors.blue,
                               ),
                             ),
                             Text(
@@ -161,7 +160,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                             Text(
                               "Subtotal",
                               style: TextStyle(
-                                  fontSize: 18, color: Colors.blue[300]),
+                                  fontSize: 18, color: Colors.blue),
                             ),
                             Text(
                               subtotal.toStringAsFixed(2).toString(),
@@ -178,8 +177,8 @@ class _EncomendaPageState extends State<EncomendaPage> {
                           children: <Widget>[
                             Container(
                               width:
-                                  (MediaQuery.of(context).size.width / 1.3) - 6,
-                              height: 45,
+                                  (MediaQuery.of(context).size.width - 62 ) ,
+                              height: 60,
 
                               // margin: EdgeInsets.only(top: 64),/s
                               padding: EdgeInsets.only(
@@ -199,7 +198,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                               child: TextField(
                                 // enabled: false,
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 18,
                                 ),
                                 decoration: InputDecoration(
                                     border: InputBorder.none,

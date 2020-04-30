@@ -42,47 +42,49 @@ class _MenuPageState extends State<MenuPage> {
             )
           ],
         ),
-        body: Container(
-          color: Colors.white,
-          child: Column(
-            children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 3.5,
-                decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(50),
-                        bottomRight: Radius.circular(50))),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+        body: SingleChildScrollView(
+                  child: Container(
+            color: Colors.white,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 3.5,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(50),
+                          bottomRight: Radius.circular(50))),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 50.0,
+                        child: Icon(
+                          Icons.widgets,
+                          size: 50.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Stack(
                   children: <Widget>[
-                    CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 50.0,
-                      child: Icon(
-                        Icons.widgets,
-                        size: 50.0,
+                    // container menu body
+                    Container(
+                      width: MediaQuery.of(context).size.width - 16,
+                      height: MediaQuery.of(context).size.height / 2,
+                      margin: EdgeInsets.only(top: 64),
+                      child: GridView.count(
+                        crossAxisCount: 3,
+                        children: menuItemView(),
                       ),
                     ),
                   ],
-                ),
-              ),
-              Stack(
-                children: <Widget>[
-                  // container menu body
-                  Container(
-                    width: MediaQuery.of(context).size.width - 16,
-                    height: MediaQuery.of(context).size.height / 2,
-                    margin: EdgeInsets.only(top: 64),
-                    child: GridView.count(
-                      crossAxisCount: 3,
-                      children: menuItemView(),
-                    ),
-                  ),
-                ],
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ));
   }

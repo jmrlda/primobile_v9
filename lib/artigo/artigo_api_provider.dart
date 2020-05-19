@@ -1,13 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:primobile/Database/Database.dart';
 import 'package:primobile/sessao/sessao_api_provider.dart';
+import 'package:http/http.dart' as http;
 
 import 'artigo_modelo.dart';
 
 class ArtigoApiProvider {
 
+  Dio dio = new Dio();
   bool sincronizado = false;
-  void getTodosArtigos() async {
+  bool erro = false;
+
+  Future getTodosArtigos() async {
   Map<String, dynamic> parsed = await SessaoApiProvider.read();
     Map<String, dynamic> filial = parsed['resultado'];
 
@@ -17,13 +21,16 @@ class ArtigoApiProvider {
   var url = protocolo + host + rota;    
 
     Response response;
+    var res;
      try {
             sincronizado = false;
 
-     response = await Dio().get( url );
+     response = await dio.get( url );
+    //  res = await http.get(url);
 
-    } on DioError catch (e) {
+    }  catch (e) {
       print("[ArtigoApiProvider]ERRO: $e");
+      erro = true;
       return null;
     }
 
@@ -33,6 +40,7 @@ class ArtigoApiProvider {
      await  DBProvider.db.insertArtigo(Artigo.fromJson(artigo));     
     }).toList();
      sincronizado = true;
+      erro = false;
 
   }
 

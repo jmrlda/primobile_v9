@@ -143,23 +143,9 @@ Widget listarArtigo() {
           }
 
       return Container(
-              child: _ListaTile(
-                title: Align (
-                  alignment: Alignment.topCenter,
-
-                  child: Text(
-                  "Artigo não encontrado",
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 20,
-                      ),
-                ),
-                )
-
-                
-    
-              ),
-            );          
+              child: Center(
+                child: CircularProgressIndicator()
+              ));         
         } else {
  return Scrollbar(
    isAlwaysShown: true, 
@@ -180,17 +166,16 @@ Widget listarArtigo() {
                     artigo.descricao,
                     style: TextStyle(
                         color: Colors.blue,
-                        fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    artigo.artigo +
+                    "Cod: " + artigo.artigo +
                         ' ' +
-                        artigo.unidade +
+                       "Un: " + artigo.unidade +
                         ', ' +
-                        artigo.preco.toString() +
+                        "PVP: " + artigo.preco.toString() +
                         ' MT',
-                    style: TextStyle(color: Colors.blueAccent, fontSize: 16),
+                    style: TextStyle(color: Colors.blue, fontSize: 14),
                   ),
                   data: artigo.descricao,
                 ),

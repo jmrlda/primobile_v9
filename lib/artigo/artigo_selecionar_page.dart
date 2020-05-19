@@ -78,6 +78,8 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
       if (listaArtigoSelecionado[i].artigo == a.artigo) {
         existe = true;
         listaArtigoSelecionado.removeAt(i);
+
+
       }
     }
 
@@ -117,7 +119,7 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
         title: new Text("Artigos"),
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).pop(listaArtigoSelecionado),
         ),
       ),
       body: Container(
@@ -202,7 +204,7 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
               itemBuilder: (context, index) {
               Artigo artigo = artigoLista[index];
 
-                return new Card(
+                return new Container(
                   color: existeArtigo(artigo) == false ? Colors.white : Colors.red,
                   child: _ListaTile(
                     selected: isSelected,
@@ -210,28 +212,27 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
                       adicionarArtigo(artigo);
                     },
                     leading: CircleAvatar(
-                      backgroundColor: Colors.blue,
-                      child: Icon(
-                        Icons.local_offer,
-                        color: Colors.white,
-                      ),
+                    backgroundColor: Colors.blue,
+                    child: Icon(
+                      Icons.local_offer,
+                      color: Colors.white,
                     ),
-                    title: Text(
-                      artigo.descricao,
-                      style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      artigo.artigo +
-                          ' ' +
-                          artigo.unidade +
-                          ', ' +
-                          artigo.preco.toString() +
-                          ' MT',
-                      style: TextStyle(color: Colors.blueAccent, fontSize: 16),
-                    ),
+                  ),
+                      title: Text(
+                    artigo.descricao,
+                    style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  subtitle: Text(
+                    "Cod: " + artigo.artigo +
+                        ' ' +
+                       "Un: " + artigo.unidade +
+                        ', ' +
+                        "PVP: " + artigo.preco.toString() +
+                        ' MT',
+                    style: TextStyle(color: Colors.blue, fontSize: 14),
+                  ),
                     data: artigo.descricao,
                   ),
                 );

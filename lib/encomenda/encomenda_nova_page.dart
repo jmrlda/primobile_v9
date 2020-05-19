@@ -120,7 +120,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
-                              "Mercad/Servico",
+                              "Mercadoria/Serviço",
                               style: TextStyle(
                                   fontSize: 18, color: Colors.blue),
                             ),
@@ -158,7 +158,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
-                              "Subtotal",
+                              "Total",
                               style: TextStyle(
                                   fontSize: 18, color: Colors.blue),
                             ),
@@ -182,7 +182,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
 
                               // margin: EdgeInsets.only(top: 64),/s
                               padding: EdgeInsets.only(
-                                  top: 4, left: 16, right: 16, bottom: 4),
+                                  top: 4, left: 6, right: 16, bottom: 4),
                               decoration: BoxDecoration(
                                   // borderRadius: BorderRadius.all(
                                   //   // Radius.circular(50)
@@ -198,7 +198,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                               child: TextField(
                                 // enabled: false,
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                 ),
                                 decoration: InputDecoration(
                                     border: InputBorder.none,
@@ -283,7 +283,10 @@ class _EncomendaPageState extends State<EncomendaPage> {
         final result = await Navigator.pushNamed(
             contexto, '/artigo_selecionar_lista',
             arguments: artigos);
-        artigos = result;
+            if ( result != null) {
+              artigos = result;
+
+            }
 
         refresh2();
     
@@ -291,7 +294,6 @@ class _EncomendaPageState extends State<EncomendaPage> {
       // Terminar
       } if (index == 2) {
         if (artigos.length > 0) {
-          print("total iva $ivaTotal");
           EncomendapiProvider encomendaApi = EncomendapiProvider();
             Map<String, dynamic> rv = await SessaoApiProvider.read();
             Map<String, dynamic> _usuario = rv['resultado'];
@@ -308,10 +310,13 @@ class _EncomendaPageState extends State<EncomendaPage> {
               artigos: artigos,
               dataHora: DateTime.now(), 
               estado: "pendente",
-              valorTotal: totalVenda);
+              valorTotal: totalVenda,
+                      encomenda_id: usuario.usuario + DateTime.now().day.toString() +  DateTime.now().month.toString() + "/" + DateTime.now().hour.toString()+ "/" + DateTime.now().minute.toString() + "/" + DateTime.now().second.toString()
+
+              );
 
               try {
-                encomendaApi.insertEncomenda(encomenda);
+                await encomendaApi.insertEncomenda(encomenda);
                 await encomendaApi.postEncomenda(encomenda);
 
               } catch (e) {
@@ -456,12 +461,18 @@ class _EncomendaPageState extends State<EncomendaPage> {
               ),
               Text("Prc.Unit: " + artigo.preco.toStringAsFixed(2).toString(),
                   style: TextStyle(color: Colors.blue)),
-              Text(
+                  Text(
                   "Subtotal: " +
-                      ( (artigo.pvp1 / ((iva + 100) / 100) ) * artigo.quantidade)
+                      ( artigo.preco * artigo.quantidade)
                           .toStringAsFixed(2)
                           .toString(),
                   style: TextStyle(color: Colors.blue))
+              // Text(
+              //     "Subtotal: " +
+              //         ( (artigo.pvp1 / ((iva + 100) / 100) ) * artigo.quantidade)
+              //             .toStringAsFixed(2)
+              //             .toString(),
+              //     style: TextStyle(color: Colors.blue))
             ],
           ),
           Padding(

@@ -133,23 +133,9 @@ Widget listaCliente() {
 
         if (clientes == null || clientes.length <= 0) {
       return Container(
-              child: _ListaTile(
-                title: Align (
-                  alignment: Alignment.topCenter,
-
-                  child: Text(
-                  "Cliente não encontrado",
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 20,
-                      ),
-                ),
-                )
-
-                
-    
-              ),
-            );          
+              child: Center(
+                child: CircularProgressIndicator()
+              ));     
         } else {
 
         return Scrollbar(
@@ -174,7 +160,6 @@ Widget listaCliente() {
                     cliente.nome,
                     style: TextStyle(
                         color: Colors.blue,
-                        fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
@@ -182,7 +167,7 @@ Widget listaCliente() {
                         ' - ' +
                         cliente.numContrib.toString() 
                         ,
-                    style: TextStyle(color: Colors.blueAccent, fontSize: 16),
+                    style: TextStyle(color: Colors.blueAccent, fontSize: 14),
                   ),
                   data: cliente,
                 ),

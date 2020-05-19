@@ -56,7 +56,12 @@ class DBProvider {
             "cliente TEXT PRIMARY KEY, "
             "nome TEXT, "
             "numContrib INTEGER, "
-            "endereco TEXT "
+            "endereco TEXT, "
+            "anulado BOOLEAN,"
+            "tipoCred INTEGER,"
+            "totalDeb REAL,"
+            "encomendaPendente REAL,"
+            "vendaNaoConvertida REAL"
             ")");
 
         await db.execute(" CREATE TABLE Usuario ("
@@ -74,7 +79,9 @@ class DBProvider {
             "data_hora TEXT, "
             "valor REAL,"
             "documento TEXT,"
-            "estado TEXT"
+            "estado TEXT,"
+            "encomenda_id TEXT"
+
             ")");
 
         await db.execute(" CREATE TABLE EncomendaItem ("
@@ -115,7 +122,6 @@ class DBProvider {
     final db = await database;
     var res =
         await db.query('Cliente', where: "cliente = ?", whereArgs: [cliente]);
-    print("teste $res");
     return res.length > 0 ? Cliente.fromMap(res[0]) : Cliente();
   }
 
@@ -163,6 +169,8 @@ class DBProvider {
   Future<List<Cliente>> getTodosClientes() async {
     final db = await database;
     var res = await db.query('Cliente');
+    print('resultado');
+    print(res);
     List<Cliente> clientes =
         res.isNotEmpty ? res.map((c) => Cliente.fromMap(c)).toList() : [];
 
@@ -301,7 +309,7 @@ class DBProvider {
     return res;
   }
 
-  insertUsuario(Usuario usuario) async {
+  Future<int> insertUsuario(Usuario usuario) async {
     try {
       
     final db = await database;
@@ -320,10 +328,11 @@ class DBProvider {
 
   insertEncomenda(Encomenda encomenda) async {
 
+    var res;
     try {
       
     final db = await database;
-    var res = await db.insert(
+     res = await db.insert(
       "Encomenda",
       encomenda.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -338,7 +347,7 @@ class DBProvider {
       throw e;
     }
 
-
+    return res;
   }
 
   void insertEncomendaItem(List<Artigo> artigos, int encomendaPk) async {

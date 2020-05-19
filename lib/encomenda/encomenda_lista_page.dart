@@ -194,7 +194,7 @@ Widget listarArtigo() {
               ),
             ),
             title: Text(
-              encomenda.cliente.cliente.toString(),
+              encomenda.cliente.cliente.toString() ,
               style: TextStyle(
                   color: Colors.blue,
                   fontSize: 20,
@@ -205,28 +205,7 @@ Widget listarArtigo() {
               style: TextStyle(color: Colors.blueAccent, fontSize: 16),
             ),
           )
-              //  _ListaTile(
-              //   leading: CircleAvatar(
-              //     backgroundColor: Colors.blue,
-              //     child: Icon(
-              //       Icons.local_offer,
-              //       color: Colors.white,
-              //     ),
-              //   ),
-              //   title: Text(
-              //     encomenda.cliente.cliente.toString(),
-              //     style: TextStyle(
-              //         color: Colors.blue,
-              //         fontSize: 20,
-              //         fontWeight: FontWeight.bold),
-              //   ),
-              //   subtitle: Text(
-              //     encomenda.artigos.length.toString(),
-
-              //                         style: TextStyle(color: Colors.blueAccent, fontSize: 16),
-              //   ),
-              //   data: encomenda.dataHora.toString(),
-              // ),
+            
               );
         },
       ),
@@ -368,11 +347,11 @@ ExpansionTile encomendaItem(
                   TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
           Padding(
             padding: EdgeInsets.only(left: 55),
-            child: Text(enc.cliente.cliente,
+            child: Text(enc.encomenda_id,
                 style: TextStyle(
                     color: Colors.blue,
                     fontWeight: FontWeight.bold,
-                    fontSize: 20)),
+                    fontSize: 16)),
           ),
         ],
       ),
@@ -385,14 +364,21 @@ ExpansionTile encomendaItem(
           child: Row(
             // mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Text(count.toString() + " Artigo(s)",
-                  style: TextStyle(color: Colors.blue, fontSize: 16)),
+              Text(count > 1 ?  count.toString() + " Artigos" : "1 Artigo",
+                  style: TextStyle(color: Colors.blue, fontSize: 14)),
               Padding(
                 padding: EdgeInsets.only(
                   left: 30,
                 ),
                 child: Text(totalValor.toString() + "MTN",
-                    style: TextStyle(color: Colors.blue, fontSize: 16)),
+                    style: TextStyle(color: Colors.blue, fontSize: 14)),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: 30,
+                ),
+                child: Text(enc.cliente.cliente,
+                    style: TextStyle(color: Colors.blue, fontSize: 14)),
               ),
             ],
           ),
@@ -402,59 +388,12 @@ ExpansionTile encomendaItem(
     children: encomendaItens,
   );
 
-  // return SizedBox(
-  //     child: Column(
-  //   children: <Widget>[
-  //     Card(
-  //       child: Column(
-  //         children: <Widget>[
-  //           Padding(
-  //             padding: EdgeInsets.only(top: 15, left: 16, right: 16),
-  //             child: Row(
-  //               // mainAxisAlignment: MainAxisAlignment.,
-  //               children: <Widget>[
-  //                 Text(enc.id.toString(),
-  //                     style: TextStyle(
-  //                         color: Colors.blue, fontWeight: FontWeight.bold)),
-  //                 Padding(
-  //                   padding: EdgeInsets.only(left: 55),
-  //                   child: Text(enc.cliente.cliente,
-  //                       style: TextStyle(
-  //                           color: Colors.blue,
-  //                           fontWeight: FontWeight.bold,
-  //                           fontSize: 20)),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //           Divider(),
-  //           Padding(
-  //             padding: EdgeInsets.only(left: 16, right: 16, bottom: 20),
-  //             child: Row(
-  //               // mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //               children: <Widget>[
-  //                 Text(count.toString() + " Artigo(s)" ,
-  //                     style: TextStyle(color: Colors.blue, fontSize: 16)),
-  //                 Padding(
-  //                   padding: EdgeInsets.only(
-  //                     left: 30,
-  //                   ),
-  //                   child: Text("No Valor de  " + totalValor.toString() + " meticais ",
-  //                       style: TextStyle(color: Colors.blue, fontSize: 16)),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-
-  //   ],
-  // ));
+  
 }
 
 Slidable encomenda(
     BuildContext context, Encomenda enc, List<EncomendaItem> itens) {
+
   return Slidable(
     actionPane: SlidableDrawerActionPane(),
     actionExtentRatio: 0.18,

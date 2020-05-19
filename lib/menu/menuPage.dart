@@ -89,81 +89,189 @@ class _MenuPageState extends State<MenuPage> {
         ));
   }
 
-  List<Card> menuItemView() {
+  List<Widget> menuItemView() {
     return [
-      Card(
-        color: Colors.white,
-        child: InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/encomenda_novo');
-            },
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Icon(Icons.add_shopping_cart, size: 80, color: Colors.blue),
-                  Text('ENCOMENDA'),
-                ],
-              ),
-            )),
+      Material(         
+    color: Colors.white,
+    child: Column(children: [
+      Center(
+      child: Ink(
+               width: 75,
+        height: 75,
+        decoration: const ShapeDecoration(
+          color: Colors.deepOrange,
+          shape: CircleBorder(),
+        ),
+        child: IconButton(
+          icon: Icon(Icons.add_shopping_cart),
+          iconSize: 35,
+          color: Colors.white,
+          onPressed: () {
+                          Navigator.pushNamed(context, '/encomenda_novo');
+
+          },
+          
+        ),
       ),
-      Card(
-        color: Colors.white,
-        child: InkWell(
-            onTap: () {
+    ),
+            Center(child: Text("ENCOMENDA", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold ),),)
+
+    ],)
+  ),
+  Material(
+    color: Colors.white,
+    child: Column(children: [
+      Center(
+      child: Ink(
+           width: 75,
+        height: 75,
+        decoration: const ShapeDecoration(
+          color: Colors.redAccent,
+          shape: CircleBorder(),
+        ),
+        child: IconButton(
+          icon: Icon(Icons.shopping_cart),
+          iconSize: 35,
+          color: Colors.white,
+          onPressed: () {
               Navigator.pushNamed(context, '/encomenda_lista');
-            },
-            child: Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(Icons.shopping_cart, size: 80, color: Colors.blue),
-                  Text('ENCOMENDA'),
-                  Text('LISTA'),
-                ],
-              ),
-            )),
+          },
+        ),
       ),
-      Card(
-        color: Colors.white,
-        child: InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/artigo_lista');
-            },
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Icon(Icons.local_offer, size: 80, color: Colors.blue),
-                  Text('ARTIGO'),
-                ],
-              ),
-            )),
+    ),
+        Center(child: Text("ENCOMENDA", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold ),),),
+        Center(child: Text("LISTA", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold ),),)
+
+    ]),
+  ),
+  Material(
+    color: Colors.white,
+    child:Column(children: [
+       Center(
+      child: Ink(
+           width: 75,
+        height: 75,
+        decoration: const ShapeDecoration(
+          color: Colors.green,
+          shape: CircleBorder(),
+        ),
+        child: IconButton(
+          icon: Icon(Icons.local_offer),
+          iconSize: 35,
+          color: Colors.white,
+          onPressed: () {
+
+            Navigator.pushNamed(context, '/artigo_lista');
+          },
+        ),
       ),
-      Card(
-        color: Colors.white,
-        child: InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/cliente_lista');
-            },
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Icon(Icons.person, size: 80, color: Colors.blue),
-                  Text(
-                    'CLIENTE',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ],
-              ),
-            )),
+    ),
+      Center(child: Text("ARTIGO", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold ),),)
+
+    ],)
+    ),
+  Material(
+    color: Colors.white,
+    child: Column(
+      children: [
+        Center(
+      child: Ink(
+           width: 75,
+        height: 75,
+        decoration: const ShapeDecoration(
+          color: Colors.lightBlue,
+          shape: CircleBorder(),
+        ),
+        child: IconButton(
+          icon: Icon(Icons.person, ),
+          iconSize: 35,
+          color: Colors.white,
+          onPressed: () {
+             Navigator.pushNamed(context, '/cliente_lista');
+          },
+        ),
       ),
+    ),
+
+    Center(child: Text("CLIENTE", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold ),),)
+      ],
+    ),
+  )
+  
+      // Card(
+      //   color: Colors.white,
+      //   child: InkWell(
+      //       onTap: () {
+      //         Navigator.pushNamed(context, '/encomenda_novo');
+      //       },
+      //       child: Center(
+      //         child: Column(
+      //           mainAxisSize: MainAxisSize.min,
+      //           crossAxisAlignment: CrossAxisAlignment.center,
+      //           // mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //           children: <Widget>[
+      //             Icon(Icons.add_shopping_cart, size: 40, color: Colors.blue),
+      //             Text('ENCOMENDA', style: TextStyle(fontSize: 12))
+      //           ],
+      //         ),
+      //       )),
+      // ),
+      // Card(
+      //   color: Colors.white,
+      //   child: InkWell(
+      //       onTap: () {
+      //         Navigator.pushNamed(context, '/encomenda_lista');
+      //       },
+      //       child: Center(
+      //         child: Column(
+      //           crossAxisAlignment: CrossAxisAlignment.center,
+      //           mainAxisAlignment: MainAxisAlignment.center,
+      //           children: <Widget>[
+      //             Icon(Icons.shopping_cart, size: 40, color: Colors.blue),
+      //             Center(
+      //               child: Text('ENCOMENDA LISTA', style: TextStyle(fontSize: 12)),
+      //             ),
+      //           ],
+      //         ),
+      //       )),
+      // ),
+      // Card(
+      //   color: Colors.white,
+      //   child: InkWell(
+      //       onTap: () {
+      //         Navigator.pushNamed(context, '/artigo_lista');
+      //       },
+      //       child: Center(
+      //         child: Column(
+      //           mainAxisSize: MainAxisSize.min,
+      //           crossAxisAlignment: CrossAxisAlignment.center,
+      //           children: <Widget>[
+      //             Icon(Icons.local_offer, size: 40, color: Colors.blue),
+      //             Text('ARTIGO', style: TextStyle(fontSize: 12),),
+      //           ],
+      //         ),
+      //       )),
+      // ),
+      // Card(
+      //   color: Colors.white,
+      //   child: InkWell(
+      //       onTap: () {
+      //         Navigator.pushNamed(context, '/cliente_lista');
+      //       },
+      //       child: Center(
+      //         child: Column(
+      //           mainAxisSize: MainAxisSize.min,
+      //           crossAxisAlignment: CrossAxisAlignment.center,
+      //           children: <Widget>[
+      //             Icon(Icons.person, size: 40, color: Colors.blue),
+      //             Text(
+      //               'CLIENTE',
+      //               style: TextStyle(color: Colors.black, fontSize: 12),
+      //             ),
+      //           ],
+      //         ),
+      //       )),
+      // ),
     ];
   }
 
@@ -187,8 +295,8 @@ class _MenuPageState extends State<MenuPage> {
                                             
 
               setState(() {
-               if (clienteApi.sincronizado == true &&
-                  artigoApi.sincronizado == true ) {
+               if ((clienteApi.sincronizado == true &&
+                  artigoApi.sincronizado == true) || (clienteApi.erro == true || artigoApi.erro == true)) {
                        Navigator.of(context).pop();
 
                   }
@@ -214,7 +322,7 @@ class _MenuPageState extends State<MenuPage> {
 
     try {
          artigoApi.getTodosArtigos();
-         clienteApi.getTodosClientes();
+           clienteApi.getTodosClientes();
     } catch (e) {
       print('Erro: $e.message');
     }

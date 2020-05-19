@@ -6,6 +6,9 @@ import 'package:primobile/Database/Database.dart';
 import 'package:primobile/artigo/artigo_modelo.dart';
 import 'package:primobile/cliente/cliente_modelo.dart';
 import 'package:primobile/usuario/usuario_modelo.dart';
+import 'package:primobile/sessao/sessao_api_provider.dart';
+import 'package:primobile/sessao/sessao_api_provider.dart';
+
 
 class Encomenda {
   String id;
@@ -16,16 +19,21 @@ class Encomenda {
   double valorTotal;
   String estado;
   DateTime dataHora;
+  String encomenda_id;
 
 
-Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, this.estado, this.dataHora});
+Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, this.estado, this.dataHora, this.encomenda_id});
 
 
   factory Encomenda.fromMap(Map<String, dynamic> json)   {
     
     Usuario usuario = Usuario(usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB', nome: 'dercio', perfil: 'admin', documento: 'vd', senha: 'rere');
+    
         Cliente cliente = Cliente(cliente: json['cliente']);
+    Future<Map<String, dynamic>> sessao =  SessaoApiProvider.read();
+    sessao.then((value) => {
 
+    });
      return new Encomenda(
          id: json['encomenda'].toString(),
         cliente: cliente,
@@ -34,8 +42,11 @@ Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, 
         valorTotal: json['valor'],
         estado: json['estado'],
         dataHora: DateTime.tryParse(json['data_hora']),
-
-      );}
+        encomenda_id: json['encomenda_id']
+      );
+      
+      
+      }
 
 
   factory Encomenda.fromMap_2(Map<String, dynamic> json, Cliente cliente)   {
@@ -49,6 +60,8 @@ Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, 
         valorTotal: json['valor'],
         estado: json['estado'],
         dataHora: DateTime.tryParse(json['data_hora']),
+        encomenda_id: json['encomenda_id']
+
 
       );}
 
@@ -59,6 +72,7 @@ Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, 
         'valor':valorTotal,
         'estado':estado,
         'data_hora':dataHora.toString(),
+        'encomenda_id': this.encomenda_id
 
       };
 
@@ -79,6 +93,7 @@ Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, 
         'valorTotal':valorTotal,
         'estado':estado,
         'dataHora':dataHora.toString(),
+        'encomenda_id': this.encomenda_id
 
       };
   }
@@ -97,11 +112,12 @@ Encomenda({this.id, this.cliente, this.vendedor, this.artigos, this.valorTotal, 
 factory Encomenda.fromJson(Map<String, dynamic> data) {
    return Encomenda(
    cliente: data['cliente'],
-        vendedor: data['nome'],
+        vendedor: data['usuario'],
         artigos: data['artigos'],
         valorTotal: data['valor'],
         estado: data['estado'],
         dataHora: data['data_hora'],
+        encomenda_id: data['encomenda_id']
 
    );
 }
@@ -115,22 +131,19 @@ factory Encomenda.fromJson(Map<String, dynamic> data) {
 
   static Future<Cliente>  getCliente(String cliente ) async {
     Cliente cli = await DBProvider.db.getCliente(cliente);
-    print('cliente vendedor');
-    print(cli);
     return cli;
   }
 
 
   static void  getVendedor( String usuario ) async {
     Usuario user = await DBProvider.db.getUsuario(usuario);
-    print('user vendedor');
-    print(user);
   }
 
 
 
   static Future<Encomenda> fromMap_1(Map<String, dynamic> json)   async {
-    
+      Map<String, dynamic> parsed = await SessaoApiProvider.read();
+    Map<String, dynamic> _user = parsed['resultado'];
     Usuario usuario = Usuario(usuario: '276D1CB0-6C8F-4078-8904-2E119D13B4FB', nome: 'dercio', perfil: 'admin', documento: 'vd', senha: 'rere');
         Cliente cliente = await DBProvider.db.getCliente(json['cliente']);
 
@@ -142,6 +155,7 @@ factory Encomenda.fromJson(Map<String, dynamic> data) {
         valorTotal: json['valor'],
         estado: json['estado'],
         dataHora: DateTime.tryParse(json['data_hora']),
+        encomenda_id: json['encomenda_id']
 
       );}
 

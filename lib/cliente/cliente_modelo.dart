@@ -5,7 +5,13 @@ class Cliente {
   String nome;  
   int numContrib;
   Endereco endereco;
-  Cliente({this.cliente, this.nome, this.numContrib = 0, this.endereco});
+  bool anulado;
+  int tipoCred;
+  double totalDeb;
+  double encomendaPendente;
+  double vendaNaoConvertida;
+
+  Cliente({this.cliente, this.nome, this.numContrib = 0, this.endereco, this.anulado, this.tipoCred, this.totalDeb, this.encomendaPendente, this.vendaNaoConvertida});
 
 
   factory Cliente.fromMap(Map<String, dynamic> json) => new Cliente(
@@ -14,6 +20,13 @@ class Cliente {
         nome: json['nome'],
       numContrib : int.parse(json['numContrib'].toString()),
         endereco: new Endereco(descricao: json['endereco']),
+        // anulado : json['anulado'],
+        tipoCred:  int.parse(json['tipoCred']),
+        // totalDeb: double.parse(json['totalDeb']),
+        // encomendaPendente:  double.parse(json['encomendaPendente']),
+        // vendaNaoConvertida:  double.parse(json['vendaNaoConvertida'])
+
+
       );
 
   Map<String, dynamic> toMap() => {
@@ -21,6 +34,13 @@ class Cliente {
         'nome': nome,
         'numContrib': numContrib,
         'endereco': endereco.descricao,
+        'anulado': anulado,
+        'tipoCred': tipoCred,
+        'totalDeb': totalDeb,
+        'encomendaPendente' : encomendaPendente,
+        'vendaNaoConvertida': vendaNaoConvertida
+
+
       };
 
 
@@ -31,6 +51,11 @@ factory Cliente.fromJson(Map<String, dynamic> data) {
       nome: data['nome'], 
       numContrib : int.parse(numContrib),
       endereco : new Endereco(descricao: data['endereco']),
+               anulado :  data['anulado'],
+        tipoCred: int.parse(data['tipoCred']),
+        totalDeb:  double.parse(data['totalDeb']),
+        encomendaPendente:  double.parse(data['encomendaPendente']),
+        vendaNaoConvertida:  double.parse(data['vendaNaoConvertida'])
    );
 }
 

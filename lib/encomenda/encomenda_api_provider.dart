@@ -40,8 +40,15 @@ class EncomendapiProvider {
     }).toList();
   }
 
-  void insertEncomenda(Encomenda encomenda) async {
-    await DBProvider.db.insertEncomenda(encomenda);
+  Future<int> insertEncomenda(Encomenda encomenda) async {
+    try {
+      await DBProvider.db.insertEncomenda(encomenda);
+
+    } catch(err) {
+      return -1;
+    }
+
+    return 0;
   }
 
   Future<http.Response> postEncomenda(Encomenda encomenda) async {

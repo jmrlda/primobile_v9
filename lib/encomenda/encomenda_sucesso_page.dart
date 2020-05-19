@@ -20,24 +20,13 @@ class EncomendaSucessoPage extends StatelessWidget {
                   size: 200,
                 ),
                 Text(
-                  "Encomenda Salvo",
+                  "Encomenda Processada",
                   style: TextStyle(
                     color: Colors.blue,
                     fontSize: 20,
                   ),
                 ),
-                MaterialButton(
-                  height: 56,
-                  color: Colors.blue[50],
-                  shape: CircleBorder(),
-                  child: Text(
-                    'Voltar',
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
+          
                 MaterialButton(
                   height: 56,
                   color: Colors.blue[50],

@@ -6,8 +6,11 @@ class Usuario {
   String senha;
   String documento;
   String perfil;
+  String vendedor;
+  String vendedorNome;
+  String telefone;
 
-  Usuario({this.usuario, this.nome, this.senha, this.documento, this.perfil});
+  Usuario({this.usuario, this.nome, this.senha, this.documento, this.perfil, this.vendedor, this.vendedorNome, this.telefone});
 
 
   factory Usuario.fromMap(Map<String, dynamic> json) => new Usuario(
@@ -16,6 +19,9 @@ class Usuario {
         senha: json['senha'],
         documento: json['documento'],
         perfil: json['nivel'],    
+        vendedor: json['vendedor'],    
+        vendedorNome: json['vendedorNome'],    
+        telefone: json['telefone'],    
       );
 
   Map<String, dynamic> toMap() => {
@@ -24,6 +30,9 @@ class Usuario {
         'senha': senha,
         'documento': documento,
         'nivel': perfil,
+        'vendedor': vendedor,
+        'vendedorNome': vendedorNome,
+        'telefone': telefone
       };
 
 
@@ -35,6 +44,9 @@ factory Usuario.fromJson(Map<String, dynamic> data) {
       senha : data['senha'],
       documento : data['documento'],
       perfil: data['nivel'],
+        vendedor: data['vendedor'],    
+        vendedorNome: data['vendedorNome'],    
+        telefone: data['telefone'], 
    );
 }
 

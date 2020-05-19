@@ -28,7 +28,7 @@ class _ClientePageState extends State<ClientePage> {
   void initState() {
 
     super.initState();
-
+    clientes = null;
     getClientes().then((value) => setState(() {
        clientes = value;
      }) );    
@@ -130,25 +130,20 @@ class _ClientePageState extends State<ClientePage> {
 
 Widget listaCliente( ) {
   
-        if (clientes == null || clientes.length <= 0) {
+        if (clientes == null ) {
       return Container(
-              child: _ListaTile(
-                title: Align (
-                  alignment: Alignment.topCenter,
+              child: Center(
+                child: CircularProgressIndicator()
+              ));
 
-                  child: Text(
-                  "Cliente não encontrado",
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 20,
-                      ),
-                ),
-                )
+      } else if (clientes.length <= 0) {
 
-                
-    
-              ),
-            );          
+      return Container(
+              child:Center(
+                child:  Text("Nenhum usuario encontrado. Sincronize os Dados"),
+              )
+              );
+      
         } else {
         return Scrollbar(
           isAlwaysShown: true,
@@ -169,7 +164,6 @@ Widget listaCliente( ) {
                     cliente.nome,
                     style: TextStyle(
                         color: Colors.blue,
-                        fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
@@ -177,7 +171,7 @@ Widget listaCliente( ) {
                         ' - ' +
                         cliente.numContrib.toString() 
                         ,
-                    style: TextStyle(color: Colors.blueAccent, fontSize: 16),
+                    style: TextStyle(color: Colors.blueAccent, fontSize: 14),
                   ),
                   data: cliente,
                 ),

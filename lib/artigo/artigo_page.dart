@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:primobile/Database/Database.dart';
 import 'artigo_modelo.dart';
-import 'package:loading/loading.dart';
-import 'package:loading/indicator/ball_pulse_indicator.dart';
 
-    List<Artigo> artigos = null; //new  List<Artigo> ();
+
+    List<Artigo> artigos;
     List<Artigo> artigosDuplicado = new  List<Artigo> ();
     bool carregado = false;
 

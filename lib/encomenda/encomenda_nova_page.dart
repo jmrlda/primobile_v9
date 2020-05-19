@@ -535,7 +535,6 @@ class _EncomendaPageState extends State<EncomendaPage> {
           color: Colors.blue,
           onPressed: () async {
             // Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
-            final result =
                 await Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
           },
           child: const Text('Adicionar ',

@@ -3,8 +3,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:primobile/Database/Database.dart';
 import 'encomendaItem_modelo.dart';
 import 'encomenda_modelo.dart';
-import 'package:loading/loading.dart';
-import 'package:loading/indicator/ball_pulse_indicator.dart';
+
 
 List<Encomenda> encomendas = new List<Encomenda>();
 List<EncomendaItem> encomendaItens = new List<EncomendaItem>();

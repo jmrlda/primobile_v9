@@ -51,7 +51,7 @@ Future  getTodosClientes() async {
   void insertEncomenda(List<Encomenda> encomendas) async {
 
     for (Encomenda enc in encomendas) {
-      int rv = await DBProvider.db.insertEncomenda(enc);
+    await DBProvider.db.insertEncomenda(enc);
     }
   }
 }

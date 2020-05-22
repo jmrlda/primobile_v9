@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:primobile/Database/Database.dart';
 import 'package:primobile/sessao/sessao_api_provider.dart';
-import 'package:http/http.dart' as http;
 
 import 'artigo_modelo.dart';
 
@@ -21,7 +20,6 @@ class ArtigoApiProvider {
   var url = protocolo + host + rota;    
 
     Response response;
-    var res;
      try {
             sincronizado = false;
 
@@ -36,9 +34,12 @@ class ArtigoApiProvider {
 
 
      (response.data as List).map((artigo) async  {
-      print('cliente: $artigo');
+      print('artigo: $artigo');
      await  DBProvider.db.insertArtigo(Artigo.fromJson(artigo));     
     }).toList();
+
+    
+    
      sincronizado = true;
       erro = false;
 

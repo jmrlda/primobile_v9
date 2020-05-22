@@ -77,6 +77,8 @@ class _LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
             decoration: boxDecoration,
             child: TextField(
+              obscureText: true,
+              obscuringCharacter: '*',
               controller: txtSenha,
               decoration: InputDecoration(
                   border: InputBorder.none,

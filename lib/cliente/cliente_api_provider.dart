@@ -25,11 +25,7 @@ Future  getTodosClientes() async {
     try {
 
             sincronizado = false;
-     response = await dio.get( url,  options: Options(
-       headers: {
-         "x-access-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwZXJmaWwiOiJhZG1pbiIsIm5vbWUiOiJqbXJhZG1pbiIsImlhdCI6MTU3ODQ5NDY5NCwiZXhwIjoxNTc4NDk0OTk0fQ.SwrH7RQT3TbbIUzaaQe6ZSVkiSlagB_WItc3fqqwm1E'
-       }
-     ) );
+     response = await dio.get( url );
 
     } on DioError catch (e) {
       print("[ClienteApiProvider]ERRO: $e");

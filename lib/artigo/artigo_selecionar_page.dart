@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:primobile/Database/Database.dart';
-import 'package:loading/loading.dart';
-import 'package:loading/indicator/ball_pulse_indicator.dart';
+
 import 'artigo_modelo.dart';
 
 

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:primobile/Database/Database.dart';
 import 'cliente_modelo.dart';
-import 'package:loading/loading.dart';
-import 'package:loading/indicator/ball_pulse_indicator.dart';
+
 
 
     List<Cliente> clientes = new  List<Cliente> ();
@@ -139,9 +138,7 @@ Widget listaCliente( ) {
       } else if (clientes.length <= 0) {
 
       return Container(
-              child:Center(
-                child:  Text("Nenhum usuario encontrado. Sincronize os Dados"),
-              )
+              child:  Text("Nenhum Cliente encontrado. Sincronize os Dados", style:   TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
               );
       
         } else {

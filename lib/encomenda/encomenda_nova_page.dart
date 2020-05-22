@@ -597,7 +597,6 @@ class ArtigoCard extends Card {
   final bool borderOnForeground;
   final EdgeInsetsGeometry margin;
   final Widget child;
-  static const double _defaultElevation = 1.0;
   final bool semanticContainer;
   final Artigo artigo;
 }

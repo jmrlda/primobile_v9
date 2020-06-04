@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+
+// local
 import 'package:primobile/Database/Database.dart';
+import '../util.dart';
 import 'encomendaItem_modelo.dart';
 import 'encomenda_modelo.dart';
 
@@ -10,6 +14,8 @@ List<EncomendaItem> encomendaItens = new List<EncomendaItem>();
 
 List<Encomenda> encomendaDuplicado = new List<Encomenda>();
 List<Widget> children = List<Widget>();
+String filtro = null;
+bool sort = true;
 
 class EncomendaListaPage extends StatefulWidget {
   EncomendaListaPage({Key key, this.title}) : super(key: key);
@@ -25,6 +31,8 @@ class _EncomendaPageState extends State<EncomendaListaPage> {
   @override
   void initState() {
     super.initState();
+    encomendas = null;
+    sort = true;
     getEncomenda().then((value) => setState(() {
           encomendas = value;
         }));
@@ -68,8 +76,22 @@ class _EncomendaPageState extends State<EncomendaListaPage> {
           encomendaItens = value;
         }));
     return new Scaffold(
+      floatingActionButton: lista_controlo(),
       appBar: new AppBar(
         backgroundColor: Colors.blue,
+          actions: <Widget>[
+            PopupMenuButton<String>(
+              onSelected: opcaoAcao,
+              itemBuilder: (BuildContext context) {
+                return Opcoes.escolha.map((String escolha) {
+                  return PopupMenuItem<String>(
+                    value: escolha,
+                    child: Text(escolha),
+                  );
+                }).toList();
+              },
+            )
+          ],
         centerTitle: true,
         title: new Text("Encomendas"),
         leading: new IconButton(
@@ -119,6 +141,7 @@ class _EncomendaPageState extends State<EncomendaListaPage> {
                     ],
                   ),
                 ),
+
                 listarEncomenda()
               ],
             )),
@@ -126,39 +149,130 @@ class _EncomendaPageState extends State<EncomendaListaPage> {
         ),
       ),
     );
+
+ 
   }
+    void opcaoAcao(String opcao) async {
+    if (opcao == 'sincronizar') {
+
+      setState(()=> {
+              SincronizarModelo(context,"encomenda")
+      });
+    }
+  }
+
+
 
   Widget listarEncomenda() {
     List<Widget> children = List<Widget>();
-    if (encomendas == null || encomendas.length <= 0) {
-      return Container(
-        child: _ListaTile(
-            title: Align(
-          alignment: Alignment.topCenter,
-          child: Text(
-            "Encomenda não encontrado",
-            style: TextStyle(
-              color: Colors.blue,
-              fontSize: 20,
-            ),
-          ),
-        )),
-      );
-    } else {
+   
+ if (encomendas == null) {
+    return Container(child: Center(child: CircularProgressIndicator()));
+
+  } else if (encomendas.length <= 0) {
+
+    return Container(
+      child: Text(
+        "Nenhuma encomenda encontrada. Sincronize os Dados",
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      ),
+    );
+  } else {
       // List encDB = encomendas;
       List<Encomenda> li = encomendas; //List<Encomenda> ();
       List<EncomendaItem> item = encomendaItens;
-      li.forEach((enc) {
+      // li.forEach((enc)
+            int pos = 1;
+      if ( sort == true) {
+                                li = li.reversed.toList();
+
+                // pos = li.length - 1;
+      } else {
+        // pos = 1;
+                li = encomendas;
+
+      }
+      for (int i = 0; i < li.length; i++) {
+        Encomenda enc = li[i];
         // List<EncomendaItem> liEnc = item.map((e) => e.encomendaPk == enc1.id );
+         if ( filtro == 'pendente') {
+          if (enc.estado != 'pendente') continue;
+        } else if ( filtro == 'processado') {
+          if (enc.estado != 'processado') continue;
+        }
 
         children.add(Padding(
             padding: const EdgeInsets.only(top: 16),
-            child: encomenda(context, enc, item)));
-      });
+            child: encomenda(context, enc, item, pos)));
+
+    //  sort == true ? pos-- : pos++;
+    pos++;
+      }
 
       return Expanded(child: ListView(children: children));
     }
   }
+  
+
+Widget lista_controlo() {
+
+ return  SpeedDial(
+          // both default to 16
+          marginRight: 18,
+          marginBottom: 20,
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: IconThemeData(size: 22.0),
+          // this is ignored if animatedIcon is non null
+          // child: Icon(Icons.add),
+          visible: true,
+          // If true user is forced to close dial manually 
+          // by tapping main button and overlay is not rendered.
+          closeManually: false,
+          curve: Curves.bounceIn,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.5,
+          onOpen: () => print('OPENING DIAL'),
+          onClose: () => print('DIAL CLOSED'),
+          tooltip: 'Speed Dial',
+          heroTag: 'speed-dial-hero-tag',
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 8.0,
+          shape: CircleBorder(),
+          children: [
+            SpeedDialChild(
+              child: Icon(Icons.view_list),
+              backgroundColor: Colors.blue,
+              label: 'Todas encomendas',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => setState(()=>filtro=null),
+            ),
+            SpeedDialChild(
+              child: Icon(Icons.schedule),
+              backgroundColor: Colors.red,
+              label: 'Pendentes',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => setState(()=>filtro = 'pendente'),
+            ),
+            SpeedDialChild(
+              child: Icon(Icons.done_all),
+              backgroundColor: Colors.green,
+              label: 'Processadas',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => setState(()=>filtro = 'processado'),
+            ),
+          
+           SpeedDialChild(
+              child: Icon(Icons.sort),
+              backgroundColor: Colors.yellow,
+              label: sort == false  ? 'Modo Descendente' : 'Modo Ascendente',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => setState(()=> sort = !sort),
+            ),
+          ],
+        );
+    
+}
 }
 
 Widget listarArtigo() {
@@ -283,13 +397,13 @@ Future<List<EncomendaItem>>  getEncomendaItem() async {
 // metodos uteis
 
 ExpansionTile encomendaItem(
-    BuildContext context, Encomenda enc, List<EncomendaItem> itens) {
+    BuildContext context, Encomenda enc, List<EncomendaItem> itens, pos) {
   int count = 0;
   double totalValor = 0.0;
   List<DataTable> encomendaItens = List<DataTable>();
 
   encomendaItens.add(DataTable(
-    columns: [
+    columns: [      
       DataColumn(
         label: Text(
           "Artigo",
@@ -302,14 +416,15 @@ ExpansionTile encomendaItem(
         ))),
       DataColumn(
         label: Text(
-          "p.Unit",
+          "P.Unit",
           style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w900,
         ))),
-      DataColumn(
+   DataColumn(
         label: Text(
-          "Estado",
+          "Subtotal",
           style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w900,
-        )))
+        ))),
+   
 
 
         
@@ -327,13 +442,16 @@ ExpansionTile encomendaItem(
               DataCell(Text(e?.artigoPk.toString())),
               DataCell(Text(e.quantidade.toString())),
               DataCell(Text(e.valorUnit.toString())),
-              DataCell(Text(enc.estado)),
-
+              DataCell(Text((e.valorUnit * e.quantidade).toStringAsFixed(2))),
             ]
           )
           );
     }
   });
+
+  MaterialColor cor = enc.estado == "pendente" ? Colors.red : Colors.blue;
+  
+
 
   return ExpansionTile(
     title: Padding(
@@ -341,14 +459,14 @@ ExpansionTile encomendaItem(
       child: Row(
         // mainAxisAlignment: MainAxisAlignment.,
         children: <Widget>[
-          Text(enc.id.toString(),
+          Text(pos.toString(),
               style:
-                  TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+                  TextStyle(color: cor, fontWeight: FontWeight.bold)),
           Padding(
             padding: EdgeInsets.only(left: 55),
             child: Text(enc.encomenda_id,
                 style: TextStyle(
-                    color: Colors.blue,
+                    color: cor,
                     fontWeight: FontWeight.bold,
                     fontSize: 16)),
           ),
@@ -363,21 +481,22 @@ ExpansionTile encomendaItem(
           child: Row(
             // mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
+
               Text(count > 1 ?  count.toString() + " Artigos" : "1 Artigo",
-                  style: TextStyle(color: Colors.blue, fontSize: 14)),
+                  style: TextStyle(color: cor, fontSize: 14)),
               Padding(
                 padding: EdgeInsets.only(
                   left: 30,
                 ),
-                child: Text(totalValor.toString() + "MTN",
-                    style: TextStyle(color: Colors.blue, fontSize: 14)),
+                child: Text(double.parse(totalValor.toStringAsFixed(2)).toString() + "MTN",
+                    style: TextStyle(color: cor, fontSize: 14)),
               ),
               Padding(
                 padding: EdgeInsets.only(
                   left: 30,
                 ),
                 child: Text(enc.cliente.cliente,
-                    style: TextStyle(color: Colors.blue, fontSize: 14)),
+                    style: TextStyle(color: cor, fontSize: 14)),
               ),
             ],
           ),
@@ -391,41 +510,13 @@ ExpansionTile encomendaItem(
 }
 
 Slidable encomenda(
-    BuildContext context, Encomenda enc, List<EncomendaItem> itens) {
+    BuildContext context, Encomenda enc, List<EncomendaItem> itens, pos) {
 
   return Slidable(
     actionPane: SlidableDrawerActionPane(),
     actionExtentRatio: 0.18,
-    child: encomendaItem(context, enc, itens),
-    secondaryActions: <Widget>[
-      IconSlideAction(
-        caption: 'Editar',
-        color: Colors.black45,
-        icon: Icons.edit,
-        onTap: () {
-          // EncomendapiProvider encomendaApi = EncomendapiProvider();
-          // encomendaApi.getTodasEncomendas("token");
-          // EncomendaPage();
-        },
-      ),
-      IconSlideAction(
-        caption: 'Cancelar',
-        color: Colors.blueGrey,
-        icon: Icons.block,
-        onTap: () => EncomendaListaPage(),
-      ),
-      IconSlideAction(
-        caption: 'Remover',
-        color: Colors.red,
-        icon: Icons.delete,
-        onTap: () => _ackAlert(context),
-      ),
-      IconSlideAction(
-        caption: 'Ver',
-        color: Colors.green,
-        icon: Icons.open_with,
-      ),
-    ],
+    child: encomendaItem(context, enc, itens, pos),
+   
   );
 }
 
@@ -489,4 +580,19 @@ Future<void> _ackAlert(BuildContext context) async {
       );
     },
   );
+
+
+  
+ 
 }
+
+
+  class Opcoes {
+  static const String Sincronizar = 'sincronizar';
+
+  static const List<String> escolha = <String>[
+    Sincronizar,
+  ];
+
+}
+

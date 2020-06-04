@@ -176,26 +176,23 @@ class _ArtigoSelecionarPageState extends State<ArtigoSelecionarPage> {
   Widget listaArtigo() {
 
     
-        if (artigoLista == null || artigoLista.length <= 0) {
-      return Container(
-              child: _ListaTile(
-                title: Align (
-                  alignment: Alignment.topCenter,
+       
+ if (artigoLista == null) {
+    // if ( carregado == false ) {
+    //   return Container(
+    //     child: CircularProgressIndicator(),
+    //   );
+    // }
 
-                  child: Text(
-                  "Artigo não encontrado",
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 20,
-                      ),
-                ),
-                )
-
-                
-    
-              ),
-            );          
-        } else {
+    return Container(child: Center(child: CircularProgressIndicator()));
+  } else if (artigoLista.length <= 0) {
+    return Container(
+      child: Text(
+        "Nenhum Artigo encontrado. Sincronize os Dados",
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      ),
+    );
+  } else {
        return  Scrollbar(
                 isAlwaysShown: true,
                 child: ListView.builder(

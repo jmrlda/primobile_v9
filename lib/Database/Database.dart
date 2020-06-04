@@ -61,7 +61,9 @@ class DBProvider {
             "tipoCred INTEGER,"
             "totalDeb REAL,"
             "encomendaPendente REAL,"
-            "vendaNaoConvertida REAL"
+            "vendaNaoConvertida REAL,"
+            "limiteCredito REAL"
+
             ")");
 
         await db.execute(" CREATE TABLE Usuario ("
@@ -81,7 +83,6 @@ class DBProvider {
             "documento TEXT,"
             "estado TEXT,"
             "encomenda_id TEXT"
-
             ")");
 
         await db.execute(" CREATE TABLE EncomendaItem ("
@@ -148,7 +149,7 @@ class DBProvider {
     return res.length > 0 ? Usuario.fromMap(res[0]) : null;
   }
 
-      Future<List<Artigo>>  getTodosArtigos() async {
+  Future<List<Artigo>> getTodosArtigos() async {
     final db = await database;
     var res = await db.query('Artigo');
     List<Artigo> artigos =
@@ -169,32 +170,20 @@ class DBProvider {
   Future<List<Cliente>> getTodosClientes() async {
     final db = await database;
     var res = await db.query('Cliente');
-    print('resultado');
-    print(res);
-    List<Cliente> clientes =
-        res.isNotEmpty ? res.map((c) => Cliente.fromMap(c)).toList() : [];
-
-    return clientes;
+    return res.isNotEmpty ? res.map((c) => Cliente.fromMap(c)).toList() : [];
+    // return clientes;
   }
 
-  // dynamic getTodasEncomendas() async {
-  //   final db = await database;
-  //   var res;
-  //   res = await db.query('Encomenda');
-  //   var enc =
-  //       res.isNotEmpty ? res.map((c) => Encomenda.fromMap(c)).toList() : [];
-
-  //   return enc;
-  // }
 
   Future<List<Encomenda>> getTodasEncomendas() async {
     final db = await database;
-    var res = await db.query('Encomenda');
+    var res = await db.query('Encomenda', orderBy: 'data_hora');
     List<Encomenda> encomenda =
         res.isNotEmpty ? res.map((c) => Encomenda.fromMap(c)).toList() : [];
 
     return encomenda;
   }
+
   Future<Encomenda> getEncomenda(int encomenda) async {
     final db = await database;
     var res =
@@ -259,6 +248,12 @@ class DBProvider {
     db.delete('Cliente', where: 'cliente = ?', whereArgs: [cliente]);
   }
 
+  apagarTodasEncomenda() async {
+    final db = await database;
+    db.rawDelete('Delete * from EncomendaItem');
+        db.rawDelete('Delete * from Encomenda');
+
+  }
   apagarTodosArtigo() async {
     final db = await database;
     db.rawDelete('Delete * from Artigo');
@@ -311,39 +306,32 @@ class DBProvider {
 
   Future<int> insertUsuario(Usuario usuario) async {
     try {
-      
-    final db = await database;
-    var res = await db.insert(
-      "Usuario",
-      usuario.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    return res;
+      final db = await database;
+      var res = await db.insert(
+        "Usuario",
+        usuario.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      return res;
     } catch (e) {
-
       throw e;
     }
-
   }
 
   insertEncomenda(Encomenda encomenda) async {
-
     var res;
     try {
-      
-    final db = await database;
-     res = await db.insert(
-      "Encomenda",
-      encomenda.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+      final db = await database;
+      res = await db.insert(
+        "Encomenda",
+        encomenda.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
 
-    print('sucesso encomenda $res');
+      print('sucesso encomenda $res');
 
-    insertEncomendaItem(encomenda.artigos, res);
-
+      insertEncomendaItem(encomenda.artigos, res);
     } catch (e) {
-
       throw e;
     }
 
@@ -369,6 +357,54 @@ class DBProvider {
       });
     } catch (e) {
       throw e;
+    }
+  }
+
+  Future<void> remove_encomenda() async {
+    try {
+      final db = await database;
+      await db.delete('EncomendaItem');
+      await db.delete('Encomenda');
+      print("[remove_encomenda]   Sucesso");
+    } catch (ex) {
+      print("[remove_encomenda]   Erro");
+      print(ex);
+    }
+  }
+
+  void remove_cliente() async {
+    try {
+      final db = await database;
+      await db.delete('Cliente');
+      print("[remove_cliente]   Sucesso");
+    } catch (ex) {
+      print("[remove_cliente]   Erro");
+      print(ex);
+    }
+  }
+
+  void remove_artigo() async {
+    try {
+      final db = await database;
+      await db.delete('Artigo');
+      print("[remove_artigo]   Sucesso");
+    } catch (ex) {
+      print("[remove_artigo]   Erro");
+      print(ex);
+    }
+  }
+
+  void remove_all() async {
+    try {
+      final db = await database;
+      await db.delete('Artigo');
+      await db.delete('Cliente');
+      await db.delete('EncomendaItem');
+      await db.delete('Encomenda');
+      print("[remove_all]   Sucesso");
+    } catch (ex) {
+      print("[remove_all]   Erro");
+      print(ex);
     }
   }
 }

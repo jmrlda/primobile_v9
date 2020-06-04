@@ -129,14 +129,19 @@ class _ClienteSelecionarPageState extends State<ClienteSelecionarPage> {
 
 Widget listaCliente() {
 
-
-        if (clientes == null || clientes.length <= 0) {
+ if (clientes == null ) {
       return Container(
               child: Center(
                 child: CircularProgressIndicator()
-              ));     
-        } else {
+              ));
 
+      } else if (clientes.length <= 0) {
+
+      return Container(
+              child:  Text("Nenhum Cliente encontrado. Sincronize os Dados", style:   TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+              );
+      
+        } else {
         return Scrollbar(
           isAlwaysShown: true,
                   child: ListView.builder(
@@ -162,10 +167,21 @@ Widget listaCliente() {
                         fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    cliente.endereco.descricao +
-                        ' - ' +
-                        cliente.numContrib.toString() 
-                        ,
+                       cliente.endereco.descricao +
+                      ' - ' +
+                      cliente.numContrib.toString() +
+                      ' - ' +
+                      "Encomenda Pendente: " +
+                      cliente.encomendaPendente.toStringAsFixed(2) +
+                      ' - ' +
+                      "Venda não Convertida: " +
+                      cliente.vendaNaoConvertida.toStringAsFixed(2) +
+                      ' - ' +
+                      "Total Deb: " +
+                      cliente.totalDeb.toStringAsFixed(2) +
+                      ' - ' +
+                      "Limite Credito: " +
+                      cliente.limiteCredito.toStringAsFixed(2),
                     style: TextStyle(color: Colors.blueAccent, fontSize: 14),
                   ),
                   data: cliente,

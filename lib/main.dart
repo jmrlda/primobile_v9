@@ -9,6 +9,8 @@ import 'package:primobile/encomenda/encomenda_nova_page.dart';
 import 'package:primobile/encomenda/encomenda_sucesso_page.dart';
 import 'package:primobile/menu/menuPage.dart';
 import 'package:primobile/sessao/loginPage.dart';
+import 'package:primobile/usuario/usuario_nova_senha.dart';
+import 'package:primobile/util.dart';
 
 
 void main() => runApp(
@@ -26,6 +28,8 @@ void main() => runApp(
       '/cliente_selecionar_lista': ( context ) => ClienteSelecionarPage(),
       '/artigo_lista': ( context ) => ArtigoPage(),
       '/artigo_selecionar_lista': ( context ) => ArtigoSelecionarPage(),
+      '/alterar_senha': ( context ) => AlterarSenhaPage(),
+      '/sucesso': ( context ) => SucessoPage(),
 
 
       // '/artigo_lista_selecionar': ( context ) => Artigo(),

@@ -20,6 +20,14 @@ class ArtigoApiProvider {
   var url = protocolo + host + rota;    
 
     Response response;
+
+       try {
+      DBProvider.db.apagarTodosArtigo();
+
+    } catch (e) {
+            print("[getTodosArtigos:remove_artigo]ERRO: $e");
+
+    }
      try {
             sincronizado = false;
 

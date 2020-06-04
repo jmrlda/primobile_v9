@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:primobile/artigo/artigo_modelo.dart';
+import 'package:primobile/encomenda/encomenda_lista_page.dart';
 import 'package:primobile/encomenda/encomenda_modelo.dart';
 import 'package:primobile/encomenda/encomenda_api_provider.dart';
 // import 'package:primobile/artigo/artigo_api_provider.dart';
@@ -25,7 +26,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
   TextEditingController txtClienteController = TextEditingController();
   BuildContext context;
   var items = List<dynamic>();
-  final encomendaItens = <dynamic>[
+  final List<dynamic> encomendaItens = <dynamic>[
     // encomendaItemVazio(),
   ];
 
@@ -46,8 +47,10 @@ class _EncomendaPageState extends State<EncomendaPage> {
     super.initState();
   }
 
-  void update() {
-    setState(() {});
+  void update(cb) {
+    setState(() {
+      cb();
+    });
   }
 
   @override
@@ -80,7 +83,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 2, bottom:  0),
+                    margin: EdgeInsets.only(top: 2, bottom: 0),
                     // color: Colors.red,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -110,7 +113,6 @@ class _EncomendaPageState extends State<EncomendaPage> {
                             // blurRadius: 5
                           )
                         ]),
-
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,8 +123,8 @@ class _EncomendaPageState extends State<EncomendaPage> {
                           children: <Widget>[
                             Text(
                               "Mercadoria/Serviço",
-                              style: TextStyle(
-                                  fontSize: 18, color: Colors.blue),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.blue),
                             ),
                             Text(
                               mercadServicValor.toStringAsFixed(2).toString() +
@@ -159,8 +161,8 @@ class _EncomendaPageState extends State<EncomendaPage> {
                           children: <Widget>[
                             Text(
                               "Total",
-                              style: TextStyle(
-                                  fontSize: 18, color: Colors.blue),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.blue),
                             ),
                             Text(
                               subtotal.toStringAsFixed(2).toString(),
@@ -176,8 +178,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
                           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Container(
-                              width:
-                                  (MediaQuery.of(context).size.width - 62 ) ,
+                              width: (MediaQuery.of(context).size.width - 62),
                               height: 60,
 
                               // margin: EdgeInsets.only(top: 64),/s
@@ -216,8 +217,42 @@ class _EncomendaPageState extends State<EncomendaPage> {
                                   // print(result);
                                   result.then((obj) {
                                     this.cliente = obj;
-                                    txtClienteController.text =
-                                        this.cliente.nome;
+                                    if ((this.cliente.anulado == false &&
+                                            this.cliente.limiteCredito == 0) ||
+                                        this.cliente.anulado == false &&
+                                            this.cliente.totalDeb <
+                                                this.cliente.limiteCredito) {
+                                      txtClienteController.text =
+                                          this.cliente.nome;
+                                    } else {
+                                      String msg = "";
+                                       if (this.cliente.anulado == true) {
+                                                  msg = "Cliente anulado. Entre em contacto com o Administrador";
+
+                                       } else  if (this.cliente.totalDeb  >
+                                                this.cliente.limiteCredito) {
+                                                  msg = "Cliente excedeu o limite de Credito de " + this.cliente.limiteCredito.toString() +" MTN. Entre em contacto com o Administrador";
+                                                }
+
+                                       showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("atenção"),
+                              content: Text(
+                                  msg),
+                              actions: <Widget>[
+                                new FlatButton(
+                                  child: new Text("ok"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                                    }
                                   });
                                 },
 
@@ -277,68 +312,88 @@ class _EncomendaPageState extends State<EncomendaPage> {
     setState(() async {
       // Sair
       if (index == 0) {
-        // Adicionar
+        Navigator.of(context).pop();
       }
       if (index == 1) {
         final result = await Navigator.pushNamed(
             contexto, '/artigo_selecionar_lista',
             arguments: artigos);
-            if ( result != null) {
-              artigos = result;
-
-            }
+        if (result != null) {
+          artigos = result;
+        }
 
         refresh2();
-    
 
-      // Terminar
-      } if (index == 2) {
+        // Terminar
+      }
+      if (index == 2) {
+        createAlertDialog(BuildContext context) {
+          TextEditingController txtArtigoQtd = new TextEditingController();
+
+          return showDialog(
+              context: contexto,
+              builder: (contexto) {
+                return AlertDialog(
+                  title: Text('Aguarde'),
+                  content: Container(
+                      width: 50,
+                      height: 50,
+                      child: Center(child: CircularProgressIndicator())),
+                );
+              });
+        }
+
+        createAlertDialog(contexto);
+
         if (artigos.length > 0) {
-          EncomendapiProvider encomendaApi = EncomendapiProvider();
-            Map<String, dynamic> rv = await SessaoApiProvider.read();
-            Map<String, dynamic> _usuario = rv['resultado'];
+          EncomendaApiProvider encomendaApi = EncomendaApiProvider();
+          Map<String, dynamic> rv = await SessaoApiProvider.read();
+          Map<String, dynamic> _usuario = rv['resultado'];
 
           Usuario usuario = Usuario(
               usuario: _usuario['usuario'],
-              nome:  _usuario['nome'],
-              perfil:  _usuario['perfil'],
-              documento:  _usuario['documento']
-              );
+              nome: _usuario['nome'],
+              perfil: _usuario['perfil'],
+              documento: _usuario['documento']);
           Encomenda encomenda = new Encomenda(
               cliente: this.cliente,
               vendedor: usuario,
               artigos: artigos,
-              dataHora: DateTime.now(), 
+              dataHora: DateTime.now(),
               estado: "pendente",
               valorTotal: totalVenda,
-                      encomenda_id: usuario.usuario + DateTime.now().day.toString() +  DateTime.now().month.toString() + "/" + DateTime.now().hour.toString()+ "/" + DateTime.now().minute.toString() + "/" + DateTime.now().second.toString()
+              encomenda_id: usuario.usuario +
+                  DateTime.now().day.toString() +
+                  DateTime.now().month.toString() +
+                  "/" +
+                  DateTime.now().hour.toString() +
+                  "/" +
+                  DateTime.now().minute.toString() +
+                  "/" +
+                  DateTime.now().second.toString());
 
-              );
-
-              try {
-                await encomendaApi.insertEncomenda(encomenda);
-                await encomendaApi.postEncomenda(encomenda);
-
-              } catch (e) {
-                  showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text("atenção"),
-                            content: Text(
-                                "Ocorreu um erro. " + e.toString()),
-                            actions: <Widget>[
-                              new FlatButton(
-                                child: new Text("Fechar"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-              }
+          try {
+            await encomendaApi.insertEncomenda(encomenda);
+            await encomendaApi.postEncomenda(encomenda);
+          } catch (e) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("atenção"),
+                  content: Text("Ocorreu um erro. " + e.toString()),
+                  actions: <Widget>[
+                    new FlatButton(
+                      child: new Text("Fechar"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          }
 
           Navigator.pushNamed(contexto, '/encomenda_sucesso');
           // limpar a lista de itens apos envio ou salvo na baese de dados;
@@ -348,8 +403,8 @@ class _EncomendaPageState extends State<EncomendaPage> {
           txtClienteController.clear();
           mercadServicValor = 0;
           subtotal = 0;
-          totalVenda  = 0;
-          ivaTotal  = 0;
+          totalVenda = 0;
+          ivaTotal = 0;
           noIva = 0;
         } else {
           print('selecionar minimo 1 artigo');
@@ -358,7 +413,6 @@ class _EncomendaPageState extends State<EncomendaPage> {
       _selectedIndex = index;
     });
   }
-  
 
   ArtigoCard encomendaItem(Artigo artigo) {
     var artigoQuantidade;
@@ -430,14 +484,12 @@ class _EncomendaPageState extends State<EncomendaPage> {
                   // artigos[0].quantidade = -223;
 
                   setState(() {
-
-
                     // calcular o custo da encomenda que pode ter preco
-                    // ja incluido iva ou nao. 
+                    // ja incluido iva ou nao.
                     // Verificar o caso e calcular o custo total.
-                    
-                  // refresh();
-                  refresh2();
+
+                    // refresh();
+                    refresh2();
                     // if (artigos != null) {
                     //   ivaTotal =
                     //       totalVenda = subtotal = mercadServicValor = 0.0;
@@ -461,9 +513,9 @@ class _EncomendaPageState extends State<EncomendaPage> {
               ),
               Text("Prc.Unit: " + artigo.preco.toStringAsFixed(2).toString(),
                   style: TextStyle(color: Colors.blue)),
-                  Text(
+              Text(
                   "Subtotal: " +
-                      ( artigo.preco * artigo.quantidade)
+                      (artigo.preco * artigo.quantidade)
                           .toStringAsFixed(2)
                           .toString(),
                   style: TextStyle(color: Colors.blue))
@@ -482,50 +534,46 @@ class _EncomendaPageState extends State<EncomendaPage> {
       ),
     );
   }
+
   void refresh2() {
-     /** 
+    /** 
          * Se tiver artigos selecionados.
         *   limpar a lista artigos previamente selecionados
         **/
 
-          encomendaItens.clear();
-          items.clear();
- 
-            if (artigos != null) {
-          // encomendaItens.clear();
-          ivaTotal = totalVenda = subtotal = mercadServicValor = 0.0;
-          encomendaItens.clear();
+    encomendaItens.clear();
+    items.clear();
 
-          artigos.forEach((a) {
-            if (a.pvp1Iva == true) {
-            noIva = (a.pvp1 / ((iva + 100) / 100) ) * a.quantidade;
-            mercadServicValor += (a.pvp1 / ((iva + 100) / 100) ) * a.quantidade ;
+    if (artigos != null) {
+      // encomendaItens.clear();
+      ivaTotal = totalVenda = subtotal = mercadServicValor = 0.0;
+      encomendaItens.clear();
 
-            subtotal +=  a.pvp1 * a.quantidade;
-            totalVenda = subtotal;
-            ivaTotal = mercadServicValor * (iva / 100);
-            encomendaItens.add(artigoEncomenda(a));
+      artigos.forEach((a) {
+        if (a.pvp1Iva == true) {
+          noIva = (a.pvp1 / ((iva + 100) / 100)) * a.quantidade;
+          mercadServicValor += (a.pvp1 / ((iva + 100) / 100)) * a.quantidade;
 
+          subtotal += a.pvp1 * a.quantidade;
+          totalVenda = subtotal;
+          ivaTotal = mercadServicValor * (iva / 100);
+          encomendaItens.add(artigoEncomenda(a));
+        } else {
+          mercadServicValor += (a.pvp1 / ((iva + 100) / 100)) * a.quantidade;
 
-
-
-            } else {
-            mercadServicValor += (a.pvp1 / ((iva + 100) / 100)  )  * a.quantidade;
-
-            subtotal +=  (a.pvp1 / ((iva + 100) / 100)  )  * a.quantidade;
-            totalVenda += subtotal;
-            ivaTotal += mercadServicValor * (iva / 100);
-            encomendaItens.add(artigoEncomenda(a));
-
-            }
-            // encomendaItens.elementAt(0)
-          });
+          subtotal += (a.pvp1 / ((iva + 100) / 100)) * a.quantidade;
+          totalVenda += subtotal;
+          ivaTotal += mercadServicValor * (iva / 100);
+          encomendaItens.add(artigoEncomenda(a));
         }
-        setState(() {
-        items.addAll(encomendaItens);
-          
-        });
+        // encomendaItens.elementAt(0)
+      });
+    }
+    setState(() {
+      items.addAll(encomendaItens);
+    });
   }
+
   Card encomendaItemVazio() {
     return Card(
         child: Column(
@@ -535,7 +583,7 @@ class _EncomendaPageState extends State<EncomendaPage> {
           color: Colors.blue,
           onPressed: () async {
             // Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
-                await Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
+            await Navigator.pushNamed(contexto, '/artigo_selecionar_lista');
           },
           child: const Text('Adicionar ',
               style: TextStyle(fontSize: 15, color: Colors.white)),
@@ -555,10 +603,24 @@ class _EncomendaPageState extends State<EncomendaPage> {
           caption: 'Remover',
           color: Colors.red,
           icon: Icons.delete,
-          onTap: () => null,
+          onTap: () => {
+            setState(() => {
+                  removeEncomenda(artigo),
+                  refresh2(),
+                }),
+          },
         ),
       ],
     );
+  }
+
+  void removeEncomenda(Artigo a) {
+    for (var i = 0; i < encomendaItens.length; i++) {
+      if (encomendaItens[i].child.artigo.artigo == a.artigo) {
+        encomendaItens.removeAt(i);
+        artigos.removeAt(i);
+      }
+    }
   }
 }
 
@@ -567,7 +629,6 @@ Padding espaco() {
     padding: EdgeInsets.only(top: 15, left: 16, right: 16, bottom: 4),
   );
 }
-
 
 class ArtigoCard extends Card {
   ArtigoCard(

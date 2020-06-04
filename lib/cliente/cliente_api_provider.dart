@@ -23,6 +23,13 @@ Future  getTodosClientes() async {
     Response response;
 
     try {
+      DBProvider.db.apagarTodosClientes();
+
+    } catch (e) {
+            print("[getTodosClientes:remove_cliente]ERRO: $e");
+
+    }
+    try {
 
             sincronizado = false;
      response = await dio.get( url );

@@ -41,11 +41,9 @@ class _LoginPageState extends State<LoginPage> {
                 CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 50.0,
-                  child: Icon(
-                    Icons.widgets,
-                    size: 50.0,
-                  ),
-                ),
+                  child: Image.asset('assets/images/jmr_logo.jpg') ,
+                
+                )
               ],
             ),
           ),
@@ -73,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
             Container(
             width: MediaQuery.of(context).size.width / 1.1,
             // height: 45,
-            margin: EdgeInsets.only(top: 32),
+            margin: EdgeInsets.only(top: 32, bottom: 20),
             padding: EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
             decoration: boxDecoration,
             child: TextField(
@@ -91,23 +89,24 @@ class _LoginPageState extends State<LoginPage> {
           ),
           
           
-             Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16, right: 32),
-              child: Text(
-                'Esqueci a Senha',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-          ),
+          //    Align(
+          //   alignment: Alignment.centerRight,
+          //   child: Padding(
+          //     padding: const EdgeInsets.only(top: 16, right: 32),
+          //     child: Text(
+          //       'Esqueci a Senha',
+          //       style: TextStyle(color: Colors.grey),
+          //     ),
+          //   ),
+          // ),
 
 
           Align(
-            alignment: FractionalOffset.bottomCenter,
+            
+            alignment: Alignment.bottomCenter,
                       child: Padding(
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 60),
-              child: MaterialButton(
+              child: MaterialButton(                
                   minWidth: double.infinity,
                   shape: StadiumBorder(),
                   color: Colors.blue,

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:primobile/Database/Database.dart';
+import 'package:primobile/util.dart';
+import 'artigo_api_provider.dart';
 import 'artigo_modelo.dart';
 
-
-    List<Artigo> artigos;
-    List<Artigo> artigosDuplicado = new  List<Artigo> ();
-    bool carregado = false;
+List<Artigo> artigos;
+List<Artigo> artigosDuplicado = new List<Artigo>();
+bool carregado = false;
+var artigoApi = ArtigoApiProvider();
 
 class ArtigoPage extends StatefulWidget {
   ArtigoPage({Key key, this.title}) : super(key: key);
@@ -16,17 +18,15 @@ class ArtigoPage extends StatefulWidget {
 }
 
 class _ArtigoPageState extends State<ArtigoPage> {
-
   TextEditingController editingController = TextEditingController();
 
   @override
-  void initState()  {  
+  void initState() {
     super.initState();
     getArtigos().then((value) => setState(() {
-       artigos = value;
-       carregado = true;
-     }) );
-
+          artigos = value;
+          carregado = true;
+        }));
   }
 
   void filterSearchResults(String query) {
@@ -36,9 +36,8 @@ class _ArtigoPageState extends State<ArtigoPage> {
     if (query.trim().isNotEmpty) {
       List<Artigo> dummyListData = List<Artigo>();
       dummySearchList.forEach((item) {
-        if (item.descricao.toLowerCase().contains(query.toString())
-        ||  item.artigo.toLowerCase().contains(query.toString())
-        ) {
+        if (item.descricao.toLowerCase().contains(query.toString()) ||
+            item.artigo.toLowerCase().contains(query.toString())) {
           dummyListData.add(item);
         }
       });
@@ -49,27 +48,37 @@ class _ArtigoPageState extends State<ArtigoPage> {
       });
       return;
     } else {
-            setState(() {
+      setState(() {
         artigos.clear();
         artigos = dummySearchList;
-                carregado = true;
-
+        carregado = true;
       });
-
-    } 
+    }
   }
 
   @override
-  Widget build(BuildContext context)  {
-     getArtigos().then((value) => setState(() {
-      //  artigos = value;
-       artigosDuplicado = value;
-               carregado = true;
-
-     }) );
+  Widget build(BuildContext context) {
+    getArtigos().then((value) => setState(() {
+          //  artigos = value;
+          artigosDuplicado = value;
+          carregado = true;
+        }));
     return new Scaffold(
       appBar: new AppBar(
         backgroundColor: Colors.blue,
+        actions: <Widget>[
+            PopupMenuButton<String>(
+              onSelected: opcaoAcao,
+              itemBuilder: (BuildContext context) {
+                return Opcoes.escolha.map((String escolha) {
+                  return PopupMenuItem<String>(
+                    value: escolha,
+                    child: Text(escolha),
+                  );
+                }).toList();
+              },
+            )
+          ],
         centerTitle: true,
         title: new Text("Artigos"),
         leading: new IconButton(
@@ -84,8 +93,7 @@ class _ArtigoPageState extends State<ArtigoPage> {
               width: MediaQuery.of(context).size.width,
               height: 100,
               decoration:
-                  BoxDecoration(color: Color.fromRGBO(241, 249, 255, 100)
-                      ),
+                  BoxDecoration(color: Color.fromRGBO(241, 249, 255, 100)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -94,13 +102,11 @@ class _ArtigoPageState extends State<ArtigoPage> {
                     height: 45,
                     padding:
                         EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                          )
-                        ]),
+                    decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                      )
+                    ]),
                     child: TextField(
                       decoration: InputDecoration(
                           border: InputBorder.none,
@@ -119,72 +125,83 @@ class _ArtigoPageState extends State<ArtigoPage> {
                 ],
               ),
             ),
-            Expanded(child: listarArtigo()
-                ),
+            Expanded(child: listarArtigo()),
           ],
         ),
       ),
-  
     );
   }
+
+  
+ void opcaoAcao(String opcao) async {
+    if (opcao == 'sincronizar') {
+      await SincronizarModelo(context,"artigo");
+      setState(() {});
+
+    }
+  }
 }
-        List<Widget> children;
+
+List<Widget> children;
 
 Widget listarArtigo() {
+  if (artigos == null) {
+    // if ( carregado == false ) {
+    //   return Container(
+    //     child: CircularProgressIndicator(),
+    //   );
+    // }
 
-
-        if (artigos == null || artigos.length <= 0) {
-
-          if ( carregado == false ) {
-            return Container(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-      return Container(
-              child: Center(
-                child: CircularProgressIndicator()
-              ));         
-        } else {
- return Scrollbar(
-   isAlwaysShown: true, 
-    child: ListView.builder(
-            itemCount: artigos.length,
-            itemBuilder: (context, index) {
-              Artigo artigo = artigos[index];
-              return Container(
-                child: _ListaTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.blue,
-                    child: Icon(
-                      Icons.local_offer,
-                      color: Colors.white,
-                    ),
-                  ),
-                  title: Text(
-                    artigo.descricao,
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    "Cod: " + artigo.artigo +
-                        ' ' +
-                       "Un: " + artigo.unidade +
-                        ', ' +
-                        "PVP: " + artigo.preco.toString() +
-                        ' MT',
-                    style: TextStyle(color: Colors.blue, fontSize: 14),
-                  ),
-                  data: artigo.descricao,
+    return Container(child: Center(child: CircularProgressIndicator()));
+  } else if (artigos.length <= 0) {
+    return Container(
+      child: Text(
+        "Nenhum Artigo encontrado. Sincronize os Dados",
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      ),
+    );
+  } else {
+    return Scrollbar(
+      isAlwaysShown: true,
+      child: ListView.builder(
+        itemCount: artigos.length,
+        itemBuilder: (context, index) {
+          Artigo artigo = artigos[index];
+          return Container(
+            child: _ListaTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.blue,
+                child: Icon(
+                  Icons.local_offer,
+                  color: Colors.white,
                 ),
-              );
-            },
-          ),
- );
+              ),
+              title: Text(
+                artigo.descricao,
+                style:
+                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                "Cod: " +
+                    artigo.artigo +
+                    ' ' +
+                    "Un: " +
+                    artigo.unidade +
+                    ', ' +
+                    "PVP: " +
+                    artigo.preco.toString() +
+                    ' MT',
+                style: TextStyle(color: Colors.blue, fontSize: 14),
+              ),
+              data: artigo.descricao,
+            ),
+          );
+        },
+      ),
+    );
+  }
+  
 }
-}
-
 
 class _ListaTile extends ListTile {
   _ListaTile(
@@ -241,8 +258,21 @@ Future teste() async {
 
   return res;
 }
+
 Future<List<Artigo>> getArtigos() async {
-  List<Artigo>  res = await DBProvider.db.getTodosArtigos();
+  List<Artigo> res = await DBProvider.db.getTodosArtigos();
 
   return res;
+}
+
+
+
+
+  class Opcoes {
+  static const String Sincronizar = 'sincronizar';
+
+  static const List<String> escolha = <String>[
+    Sincronizar,
+  ];
+
 }

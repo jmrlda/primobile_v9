@@ -115,7 +115,7 @@ class Artigo {
         artigo: data['artigo'],
         descricao: data['descricao'],
         preco: data['preco'].toDouble(),
-        quantidade: 1,
+        quantidade: data['quantidade'].toDouble(),
         quantidadeStock: data['quantidade'].toDouble(),
         civa: data['civa']?.toDouble(),
         iva: data['iva']?.toDouble(),

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dio_retry/dio_retry.dart';
 import 'package:primobile/Database/Database.dart';
 import 'package:primobile/sessao/sessao_api_provider.dart';
 
@@ -19,10 +20,20 @@ Future<List<Usuario>> getTodosUsuario(  ) async {
     Response response;
 
     try {
-     response = await Dio().get( url );
+        Dio dio;
+  dio = new Dio()
+    ..interceptors.add(RetryInterceptor(
+      dio: dio,
+      options: const RetryOptions(
+        retries: 3, // numero de tentativas antes de falhar
+        retryInterval: const Duration(seconds: 3),
+         
+      )
+    ));
+     response = await dio.get( url );
           } on DioError catch (e) {
       print(e);
-      return null;
+      return List();
     }
 
     return (response.data as List).map((usuario) {

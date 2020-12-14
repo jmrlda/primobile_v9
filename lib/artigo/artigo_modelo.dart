@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class Artigo {
@@ -22,6 +23,8 @@ class Artigo {
   bool pvp5Iva;
   double pvp6;
   bool pvp6Iva;
+  Uint8List imagemBuffer;
+  String imagemBufferStr;
 
   Artigo(
       {this.artigo,
@@ -43,7 +46,10 @@ class Artigo {
       this.pvp5,
       this.pvp5Iva,
       this.pvp6,
-      this.pvp6Iva});
+      this.pvp6Iva,
+      this.imagemBuffer,
+      this.imagemBufferStr
+      });
 
   factory Artigo.fromMap(Map<String, dynamic> json) => new Artigo(
       artigo: json['artigo'],
@@ -53,6 +59,9 @@ class Artigo {
       civa: json['civa']?.toDouble(),
       iva: json['iva']?.toDouble(),
       unidade: json['unidade'],
+            // imagemBuffer: json['imagemBuffer'] ,
+         imagemBuffer: json['imagemBuffer'] != null ?  null :   json['imagemBuffer'],
+
       pvp1: json['pvp1'].toDouble(),
       pvp1Iva: json['pvp1Iva'] == 1 ? true : false,
       pvp2: json['pvp2'].toDouble(),
@@ -75,6 +84,8 @@ class Artigo {
         'civa': civa,
         'iva': iva,
         'unidade': unidade,
+                'imagemBuffer': imagemBuffer,
+
         'pvp1': pvp1,
         'pvp1Iva': pvp1Iva == true ? 1 : 0,
         'pvp2': pvp2,
@@ -89,6 +100,11 @@ class Artigo {
         'pvp6Iva': pvp6Iva == true ? 1 : 0,
       };
 
+  Map<String, dynamic> imagemToMap() => {
+    'artigo': this.artigo,
+    'imagemBuffer': this.imagemBuffer
+  };
+
   Map<String, dynamic> toMapDb() => {
         'artigo': artigo,
         'descricao': descricao,
@@ -96,7 +112,8 @@ class Artigo {
         'quantidadeStock': quantidadeStock,
         'civa': civa,
         'iva': iva,
-        'unidade': unidade,
+        'unidade': unidade,         
+        'imagemBuffer': imagemBuffer,
         'pvp1': pvp1,
         'pvp1Iva': pvp1Iva == true ? 1 : 0,
         'pvp2': pvp2,
@@ -131,7 +148,11 @@ class Artigo {
         pvp5: data['pvp5'].toDouble(),
         pvp5Iva: data['pvp5Iva'],
         pvp6: data['pvp6'].toDouble(),
-        pvp6Iva: data['pvp6Iva']);
+        pvp6Iva: data['pvp6Iva'],
+        //  imagemBuffer:  data['imagemBuffer'] ,
+
+      );
+
   }
 
   List<Artigo> parseArtigos(String response) {

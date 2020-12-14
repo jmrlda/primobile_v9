@@ -5,6 +5,7 @@ import 'package:primobile/artigo/artigo_modelo.dart';
 import 'package:primobile/cliente/cliente_modelo.dart';
 import 'package:primobile/encomenda/encomendaItem_modelo.dart';
 import 'package:primobile/encomenda/encomenda_modelo.dart';
+import 'package:primobile/encomenda/regraPrecoDesconto_modelo.dart';
 import 'package:primobile/usuario/usuario_modelo.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqflite.dart' as _;
@@ -24,9 +25,9 @@ class DBProvider {
     return _database;
   }
 
-  initDB() async {
+  Future<Database> initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "primobileDB.db");
+    String path = join(documentsDirectory.path, "primobile.db");
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (_.Database db, int version) async {
       try {
@@ -35,9 +36,11 @@ class DBProvider {
             "descricao TEXT, "
             "preco REAL, "
             "quantidadeStock REAL, "
+            "quantidade REAL, "
             "iva REAL, "
             "civa REAL, "
             "unidade TEXT,"
+            "imagemBuffer TEXT,"
             "pvp1 REAL,"
             "pvp1Iva INTEGER,"
             "pvp2 REAL,"
@@ -62,8 +65,8 @@ class DBProvider {
             "totalDeb REAL,"
             "encomendaPendente REAL,"
             "vendaNaoConvertida REAL,"
-            "limiteCredito REAL"
-
+            "limiteCredito REAL,"
+            "imagemBuffer TEXT"
             ")");
 
         await db.execute(" CREATE TABLE Usuario ("
@@ -82,7 +85,10 @@ class DBProvider {
             "valor REAL,"
             "documento TEXT,"
             "estado TEXT,"
-            "encomenda_id TEXT"
+            "encomenda_id TEXT,"
+            "longitude TEXT,"
+            "latitude TEXT,"
+            "assinaturaImagemBuffer TEXT"
             ")");
 
         await db.execute(" CREATE TABLE EncomendaItem ("
@@ -94,6 +100,22 @@ class DBProvider {
             "constraint encomenda_fk foreign key (encomenda) references Encomenda(encomenda), "
             "constraint artigo_fk foreign key (artigo) references Artigo(artigo) , "
             "constraint itemEncomenda_pk primary key (encomenda, artigo)"
+            ")");
+
+        await db.execute(" CREATE TABLE RegraPreco ("
+            "encomenda TEXT , "
+            "regra TEXT, "
+            "artigo TEXT, "
+            "cliente TEXT, "
+            "validade INTEGER, "
+            "dataInicial TEXT, "
+            "dataFinal TEXT, "
+            "preco REAL, "
+            "tipoPreco INTEGER, "
+            "desconto REAL, "
+            "constraint encomenda_fk foreign key (encomenda) references Encomenda(encomenda), "
+            "constraint artigo_fk foreign key (artigo) references Artigo(artigo) , "
+            "constraint regrapreco_pk primary key (encomenda, artigo, cliente)"
             ")");
       } catch (e) {
         print('[initDB] Erro: $e.message');
@@ -141,10 +163,10 @@ class DBProvider {
     return res.length > 0 ? Usuario.fromMap(res[0]) : Usuario();
   }
 
-  Future<Usuario> login(String nome_email, String senha) async {
+  Future<Usuario> login(String nomeEmail, String senha) async {
     final db = await database;
     var res = await db.query('Usuario',
-        where: "nome = ? and senha = ?", whereArgs: [nome_email, senha]);
+        where: "nome = ? and senha = ?", whereArgs: [nomeEmail, senha]);
 
     return res.length > 0 ? Usuario.fromMap(res[0]) : null;
   }
@@ -153,7 +175,7 @@ class DBProvider {
     final db = await database;
     var res = await db.query('Artigo');
     List<Artigo> artigos =
-        res.isNotEmpty ? res.map((c) => Artigo.fromMap(c)).toList() : [];
+        res.isNotEmpty ? res.map((c) => Artigo.fromMap(c)).toList() : null;
 
     return artigos;
   }
@@ -174,7 +196,6 @@ class DBProvider {
     // return clientes;
   }
 
-
   Future<List<Encomenda>> getTodasEncomendas() async {
     final db = await database;
     var res = await db.query('Encomenda', orderBy: 'data_hora');
@@ -192,11 +213,17 @@ class DBProvider {
     return res.isEmpty ? Encomenda.fromMap(res.first) : Encomenda();
   }
 
-  dynamic getTodasEncomendaItens() async {
-    final db = await database;
+  Future<List<EncomendaItem>> getTodasEncomendaItens() async {
+     List<EncomendaItem> enc;
+    try {
+          final db = await database;
     var res = await db.query('EncomendaItem');
-    var enc =
+     enc =
         res.isNotEmpty ? res.map((c) => EncomendaItem.fromMap(c)).toList() : [];
+
+    } catch (e) {
+      throw e;
+    }
 
     return enc;
   }
@@ -212,11 +239,38 @@ class DBProvider {
     return enc;
   }
 
-  actualizarArtigo(Artigo artigo) async {
+  Future<List<RegraPrecoDesconto>> getEncomendaRegra(String encomenda) async {
     final db = await database;
-    var res = await db.update('Artigo', artigo.toMap(),
-        where: "artigo = ?", whereArgs: [artigo.artigo]);
-    return res;
+
+    var res = await db
+        .query('RegraPreco', where: "encomenda = ?", whereArgs: [encomenda]);
+
+    List<RegraPrecoDesconto> regra =
+        res.isNotEmpty ? res.map((c) => RegraPrecoDesconto.fromMap(c)).toList() : [];
+
+    return regra;
+  }
+// 
+  Future<List<RegraPrecoDesconto>> getEncomendaRegra1() async {
+    final db = await database;
+    var res = await db
+        .query('RegraPreco');
+
+    List<RegraPrecoDesconto> regra =
+        res.isNotEmpty ? res.map((c) => RegraPrecoDesconto.fromMap(c)).toList() : [];
+
+    return regra;
+  }
+
+  void actualizarArtigo(Artigo artigo, callback) {
+    // final db = null;
+    database.then((value) {
+      final db = value;
+      db.update('Artigo', artigo.toMap(),
+          where: "artigo = ?", whereArgs: [artigo.artigo]).then((value) {
+        print("alterado com sucesso!");
+      });
+    });
   }
 
   actualizarUsuario(Usuario usuario) async {
@@ -251,9 +305,9 @@ class DBProvider {
   apagarTodasEncomenda() async {
     final db = await database;
     db.rawDelete('Delete * from EncomendaItem');
-        db.rawDelete('Delete * from Encomenda');
-
+    db.rawDelete('Delete * from Encomenda');
   }
+
   apagarTodosArtigo() async {
     final db = await database;
     db.rawDelete('Delete * from Artigo');
@@ -273,11 +327,19 @@ class DBProvider {
     final db = await database;
     var res;
     try {
-      res = await db.insert(
-        "Artigo",
-        artigo.toMapDb(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      db.transaction((txn) {
+        return txn.insert(
+          "Artigo",
+          artigo.toMapDb(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      });
+
+      // res = await db.insert(
+      //   "Artigo",
+      //   artigo.toMapDb(),
+      //   conflictAlgorithm: ConflictAlgorithm.replace,
+      // );
     } catch (e) {
       print('[insertArtigo] Ocorreu um erro');
       print(e.message);
@@ -285,6 +347,44 @@ class DBProvider {
 
     return res;
   }
+ Future insertArtigoAll(List<Artigo> artigos) async {
+    // final db = await database;
+    // var res;
+    // try {
+    //   db.transaction((txn) {
+    //     txn.insert(
+    //       "Artigo",
+    //       artigo.toMapDb(),
+    //       conflictAlgorithm: ConflictAlgorithm.replace,
+    //     );
+    //   });
+
+    //   // res = await db.insert(
+    //   //   "Artigo",
+    //   //   artigo.toMapDb(),
+    //   //   conflictAlgorithm: ConflictAlgorithm.replace,
+    //   // );
+    // } catch (e) {
+    //   print('[insertArtigo] Ocorreu um erro');
+    //   print(e.message);
+    // }
+
+ final db = await database;
+    Batch batch = db.batch();
+     try {
+      for (Artigo artigo in artigos) {
+  
+         batch.insert("Artigo", artigo.toMapDb(), conflictAlgorithm:  ConflictAlgorithm.replace);
+    }
+        await batch.commit(noResult: true);
+
+        } catch (e) {
+      print('[insertArtigoAll] Ocorreu um erro');
+      print(e.message());
+    }
+
+  }
+
 
   insertCliente(Cliente cliente) async {
     final db = await database;
@@ -295,7 +395,6 @@ class DBProvider {
         cliente.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      print('sucesso');
     } catch (e) {
       print('[insertCliente] Ocorreu um erro');
       print(e.message());
@@ -303,6 +402,27 @@ class DBProvider {
 
     return res;
   }
+
+  insertClienteAll(List<Cliente> clientes) async {
+    final db = await database;
+    var res;
+    Batch batch = db.batch();
+    try {    
+      for (Cliente cliente in clientes) {
+    batch.insert("Cliente", cliente.toMap(), conflictAlgorithm:  ConflictAlgorithm.replace);
+    }
+         res =  await batch.commit(noResult: true);
+
+  } catch (e) {
+      print('[insertClienteAll] Ocorreu um erro');
+      print(e.message());
+    }
+
+    return res;
+  }
+
+
+
 
   Future<int> insertUsuario(Usuario usuario) async {
     try {
@@ -319,7 +439,7 @@ class DBProvider {
   }
 
   insertEncomenda(Encomenda encomenda) async {
-    var res;
+    int res;
     try {
       final db = await database;
       res = await db.insert(
@@ -328,12 +448,39 @@ class DBProvider {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
 
-      print('sucesso encomenda $res');
-
-      insertEncomendaItem(encomenda.artigos, res);
+       insertEncomendaItem(encomenda.artigos, res);
+      if ( encomenda.regrasPreco != null ) await insertEncomendaRegra(encomenda.encomenda_id, encomenda.regrasPreco);
     } catch (e) {
       throw e;
     }
+
+    return res;
+  }
+
+  
+  insertEncomendaAll(List<Encomenda> encomendas) async {
+    final db = await database;
+    var res;
+    Batch batch = db.batch();
+      for (Encomenda enc in encomendas) {
+    batch.insert("Encomenda", enc.toMap(), conflictAlgorithm:  ConflictAlgorithm.replace);
+    try {
+      // res = await db.insert(
+      //   "Cliente",
+      //   cliente.toMap(),
+      //   conflictAlgorithm: ConflictAlgorithm.replace,
+      // );
+     res =  await batch.commit(noResult: true);
+
+
+
+    } catch (e) {
+      print('[insertEncomendaAll] Ocorreu um erro');
+      print(e.message());
+    }
+
+    }
+
 
     return res;
   }
@@ -342,7 +489,7 @@ class DBProvider {
     try {
       final db = await database;
       artigos.forEach((artigo) async {
-        var res = await db.insert(
+        var rv = await db.insert(
           "EncomendaItem",
           {
             'encomenda': encomendaPk,
@@ -353,57 +500,134 @@ class DBProvider {
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
-        print('sucesso encomenda item $res');
+
+        print( rv);
       });
     } catch (e) {
       throw e;
     }
   }
+  
+  void insertEncomendaItemAll(List<Artigo> artigos, int encomendaPk) async {
+    try {
+      final db = await database;
+      artigos.forEach((artigo) async {
+       db.batch().insert (
+          "EncomendaItem",
+          {
+            'encomenda': encomendaPk,
+            'artigo': artigo.artigo,
+            'valor_unit': artigo.preco,
+            'quantidade': artigo.quantidade,
+            'valor_total': artigo.preco * artigo.quantidade
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      });
 
-  Future<void> remove_encomenda() async {
+      await  db.batch().commit(noResult: true);
+
+
+    } catch (e) {
+      throw e;
+    }
+
+
+  }
+
+  Future<int> insertEncomendaRegra(
+      String encomenda, List<RegraPrecoDesconto> regras) async {
+
+        int res;
+    try {
+      for (int i = 0; i < regras.length; i++) {
+        RegraPrecoDesconto regra = regras[i];
+        final db = await database;
+         res = await db.insert(
+          "regraPreco",
+          {
+            'encomenda': encomenda,
+            'regra': regra.regra,
+            'artigo': regra.artigo,
+            'cliente': regra.cliente,
+            'validade': regra.validade == true ? 1 : 0,
+            'dataInicial': regra.dataInicial,
+            'dataFinal': regra.dataFinal,
+            'preco': regra.preco,
+            'tipoPreco': regra.tipoPreco,
+            'desconto': regra.desconto
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    } catch (e) {
+      throw e;
+    }
+
+    return res;
+  }
+
+  Future<void> removeEncomenda() async {
     try {
       final db = await database;
       await db.delete('EncomendaItem');
       await db.delete('Encomenda');
-      print("[remove_encomenda]   Sucesso");
+      print("[removeEncomenda]   Sucesso");
     } catch (ex) {
-      print("[remove_encomenda]   Erro");
+      print("[removeEncomenda]   Erro");
       print(ex);
     }
   }
 
-  void remove_cliente() async {
+  Future<bool> removeEncomendaById(int id) async {
+    bool rv = false;
+    try {
+      final db = await database;
+      await db.delete('EncomendaItem', where: 'encomenda', whereArgs: [id]);
+      await db.delete('Encomenda', where: 'id', whereArgs: [id]);
+      print("[removeEncomenda]   Sucesso");
+      rv = true;
+    } catch (ex) {
+      print("[removeEncomenda]   Erro");
+      print(ex);
+      rv = false;
+    }
+
+    return rv;
+  }
+
+  void removeCliente() async {
     try {
       final db = await database;
       await db.delete('Cliente');
-      print("[remove_cliente]   Sucesso");
+      print("[removeCliente]   Sucesso");
     } catch (ex) {
-      print("[remove_cliente]   Erro");
+      print("[removeCliente]   Erro");
       print(ex);
     }
   }
 
-  void remove_artigo() async {
+  void removeArtigo() async {
     try {
       final db = await database;
       await db.delete('Artigo');
-      print("[remove_artigo]   Sucesso");
+      print("[removeArtigo]   Sucesso");
     } catch (ex) {
-      print("[remove_artigo]   Erro");
+      print("[removeArtigo]   Erro");
       print(ex);
     }
   }
 
-  void remove_all() async {
+  void removeAll() async {
     try {
       final db = await database;
       await db.delete('Artigo');
       await db.delete('Cliente');
       await db.delete('EncomendaItem');
       await db.delete('Encomenda');
-      print("[remove_all]   Sucesso");
+      print("[removeAll]   Sucesso");
     } catch (ex) {
-      print("[remove_all]   Erro");
+      print("[removeAll]   Erro");
       print(ex);
     }
   }

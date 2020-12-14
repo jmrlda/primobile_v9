@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:primobile/sessao/sessao_api_provider.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:primobile/util.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -41,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
                 CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 50.0,
-                  child: Image.asset('assets/images/jmr_logo.jpg') ,
+                  child: Image.asset('assets/images/jmr_logo.png') ,
                 
                 )
               ],
@@ -121,7 +122,30 @@ class _LoginPageState extends State<LoginPage> {
                         await (Connectivity().checkConnectivity());
                     if (conexaoResultado == ConnectivityResult.mobile ||
                         conexaoResultado == ConnectivityResult.wifi) {
-                      int rv = await SessaoApiProvider.login(nome, senha);
+                          // bool rv = await checkAcessoInternet();
+                     autenticar(nome, senha, true);
+                    } else {
+                      autenticar(nome, senha, false);
+                   
+                    }
+
+                    // Usuario usuario = await DBProvider.db.login(nome, senha);
+                  }),
+            ),
+          ),
+            ],
+          )
+        )
+        
+        );
+  }
+
+  
+  
+void autenticar(String nome, String senha,  bool online ) async {
+   Map<String, dynamic>  resultado = await SessaoApiProvider.login(nome, senha, online);
+   int rv = resultado['status'];
+   dynamic descricao = resultado['descricao'];
                       if (rv == 1) {
                         setState(() {
                           boxDecoration = BoxDecoration(
@@ -175,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                             return AlertDialog(
                               title: Text("atenção"),
                               content: Text(
-                                  "Ocorreu um erro desconhecido. Tentar novamente!"),
+                                  "Ocorreu um erro desconhecido. Tentar novamente!" + descricao.toString()),
                               actions: <Widget>[
                                 new FlatButton(
                                   child: new Text("Fechar"),
@@ -193,35 +217,6 @@ class _LoginPageState extends State<LoginPage> {
                         txtSenha.clear();
                         Navigator.pushNamed(context, '/menu');
                       }
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text("atenção"),
-                            content: Text(
-                                "Erro de Conexão. Verificar se os Dados ou Wifi estão ligados!"),
-                            actions: <Widget>[
-                              new FlatButton(
-                                child: new Text("Fechar"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-
-                    // Usuario usuario = await DBProvider.db.login(nome, senha);
-                  }),
-            ),
-          ),
-            ],
-          )
-        )
-        
-        );
-  }
 }
+}
+

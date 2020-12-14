@@ -1,4 +1,3 @@
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:primobile/sessao/sessao_api_provider.dart';
 import 'package:connectivity/connectivity.dart';
@@ -49,7 +48,7 @@ class _AlterarSenhaPageState extends State<AlterarSenhaPage> {
               CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 50.0,
-                child: Image.asset('assets/images/jmr_logo.png'),
+                child: Image.asset('assets/images/jmr_logo.jpg'),
               ),
             ],
           ),
@@ -138,54 +137,32 @@ class _AlterarSenhaPageState extends State<AlterarSenhaPage> {
                   String senhaNova = txtSenhaNova.text.trim();
                   String senhaConfirmar = txtSenhaConfirmar.text.trim();
                   if (senhaActual.length < 6) {
-                    setState(()  {
+                    setState(() => {
                           boxDecorationSenhaActual = BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(50)),
                               color: Colors.white,
                               boxShadow: [
                                 BoxShadow(color: Colors.red, blurRadius: 5)
-                              ]);
+                              ])
                         });
-
-                              Flushbar(
-          title: "Atenção",
-          // message:  "Dispositivo sem conexão WIFI ou Dados Moveis. Por Favor Active para sincronizar dados!",
-          messageText: Text(
-              'Senha invalida',
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          duration: Duration(seconds: 4),
-          backgroundColor: Colors.red,
-        )..show(context);
                   } else if (senhaNova.length < 6) {
-                    setState(()  {
+                    setState(() => {
                           boxDecorationSenhaActual = BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(50)),
                               color: Colors.white,
                               boxShadow: [
                                 BoxShadow(color: Colors.red, blurRadius: 5)
-                              ]);
+                              ]),
                           boxDecoration = BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(50)),
                               color: Colors.white,
                               boxShadow: [
                                 BoxShadow(color: Colors.red, blurRadius: 5)
-                              ]);
+                              ])
                         });
-
-                              Flushbar(
-          title: "Atenção",
-          // message:  "Dispositivo sem conexão WIFI ou Dados Moveis. Por Favor Active para sincronizar dados!",
-          messageText: Text(
-              'A Senha deve no minimo conter 6 caracteres!',
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          duration: Duration(seconds: 4),
-          backgroundColor: Colors.red,
-        )..show(context);
                   } else if (senhaActual == senhaNova &&
                       senhaNova == senhaConfirmar) {
                     boxDecorationSenhaActual = BoxDecoration(
@@ -200,27 +177,16 @@ class _AlterarSenhaPageState extends State<AlterarSenhaPage> {
                         boxShadow: [
                           BoxShadow(color: Colors.red, blurRadius: 5)
                         ]);
-                    // setState(()  {boxDecorationSenhaActual; boxDecoration;});
-
-                          Flushbar(
-          title: "Atenção",
-          // message:  "Dispositivo sem conexão WIFI ou Dados Moveis. Por Favor Active para sincronizar dados!",
-          messageText: Text(
-              'A senha não foi alterado. Tente uma senha diferente da actual!',
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          duration: Duration(seconds: 4),
-          backgroundColor: Colors.red,
-        )..show(context);
+                    setState(() => {boxDecorationSenhaActual, boxDecoration});
                   } else if ((senhaNova != senhaConfirmar)) {
-                    setState(()  {
+                    setState(() => {
                           boxDecoration = BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(50)),
                               color: Colors.white,
                               boxShadow: [
                                 BoxShadow(color: Colors.red, blurRadius: 5)
-                              ]);
+                              ])
                         });
                   } else {
                     boxDecoration = BoxDecoration(

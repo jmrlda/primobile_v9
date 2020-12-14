@@ -1,23 +1,18 @@
-// import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:primobile/Database/Database.dart';
-import 'package:primobile/sessao/sessao_api_provider.dart';
 import 'package:primobile/util.dart';
-
+import 'artigo_api_provider.dart';
 import 'artigo_modelo.dart';
 
-List<Artigo> artigoLista = new List<Artigo>();
+List<Artigo> artigos;
 List<Artigo> artigosDuplicado = new List<Artigo>();
-String baseUrl = "";
-String url = "";
+bool carregado = false;
+var artigoApi = ArtigoApiProvider();
 
-// ignore: must_be_immutable
 class ArtigoPage extends StatefulWidget {
-  List<Artigo> artigos;
+  ArtigoPage({Key key, this.title}) : super(key: key);
+  final String title;
 
-  ArtigoPage({Key key, this.artigos}) : super(key: key);
-  // final String title;
   @override
   _ArtigoPageState createState() => new _ArtigoPageState();
 }
@@ -25,41 +20,15 @@ class ArtigoPage extends StatefulWidget {
 class _ArtigoPageState extends State<ArtigoPage> {
   TextEditingController editingController = TextEditingController();
 
-  List<Artigo> listaArtigoSelecionado = List<Artigo>();
-
-  var duplicateItems;
-
-  var items = List<_ListaTile>();
-
   @override
   void initState() {
     super.initState();
-
-    SessaoApiProvider.read().then((parsed) async {
-      Map<String, dynamic> filial = parsed['resultado'];
-      String protocolo = 'http://';
-      String host = filial['empresa_filial']['ip'];
-      String rota = '/api/ImagemUpload/artigo/';
-      // var status = await getUrlStatus(url) ;
-            if (this.mounted == true) {
-
-      setState(() {
-        baseUrl = url = protocolo + host + rota;
-      });
-            }
-    });
-          if (this.mounted == true) {
-
     getArtigos().then((value) => setState(() {
-          if (value != null && value.length > 0)
-            artigosDuplicado = artigoLista = value;
-          else
-            artigoLista = null;
+          artigos = value;
+          carregado = true;
         }));
-          }
   }
 
-  // metodo para busca de artigos na lista
   void filterSearchResults(String query) {
     List<Artigo> dummySearchList = List<Artigo>();
 
@@ -67,67 +36,54 @@ class _ArtigoPageState extends State<ArtigoPage> {
     if (query.trim().isNotEmpty) {
       List<Artigo> dummyListData = List<Artigo>();
       dummySearchList.forEach((item) {
-        if (item.descricao
-                .toLowerCase()
-                .contains(query.toString().toLowerCase()) ||
-            item.artigo
-                .toLowerCase()
-                .contains(query.toString().toLowerCase())) {
+        if (item.descricao.toLowerCase().contains(query.toString()) ||
+            item.artigo.toLowerCase().contains(query.toString())) {
           dummyListData.add(item);
         }
       });
-            if (this.mounted == true) {
-
       setState(() {
-        artigoLista.clear();
-        artigoLista = dummyListData;
+        artigos.clear();
+        artigos = dummyListData;
+        carregado = true;
       });
-            }
       return;
     } else {
-            if (this.mounted == true) {
-
       setState(() {
-        artigoLista.clear();
-        artigoLista = dummySearchList;
+        artigos.clear();
+        artigos = dummySearchList;
+        carregado = true;
       });
-            }
     }
   }
 
-  var color = Colors.white;
-
   @override
   Widget build(BuildContext context) {
-    getArtigos().then((value) {
-      if (this.mounted == true) {
-        setState(() {
+    getArtigos().then((value) => setState(() {
+          //  artigos = value;
           artigosDuplicado = value;
-        });
-      }
-    });
-
+          carregado = true;
+        }));
     return new Scaffold(
       appBar: new AppBar(
         backgroundColor: Colors.blue,
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: opcaoAcao,
-            itemBuilder: (BuildContext context) {
-              return Opcoes.escolha.map((String escolha) {
-                return PopupMenuItem<String>(
-                  value: escolha,
-                  child: Text(escolha),
-                );
-              }).toList();
-            },
-          )
-        ],
+        actions: <Widget>[
+            PopupMenuButton<String>(
+              onSelected: opcaoAcao,
+              itemBuilder: (BuildContext context) {
+                return Opcoes.escolha.map((String escolha) {
+                  return PopupMenuItem<String>(
+                    value: escolha,
+                    child: Text(escolha),
+                  );
+                }).toList();
+              },
+            )
+          ],
         centerTitle: true,
         title: new Text("Artigos"),
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(listaArtigoSelecionado),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Container(
@@ -169,121 +125,82 @@ class _ArtigoPageState extends State<ArtigoPage> {
                 ],
               ),
             ),
-            Expanded(child: listaArtigo()),
+            Expanded(child: listarArtigo()),
           ],
         ),
       ),
     );
   }
 
-  Widget listaArtigo() {
-    if (artigoLista != null && artigoLista.length <= 0) {
-
-      getArtigos().then((value) {
-            if (this.mounted == true) {
-
-       setState(() {
-            if (value != null && value.length > 0)
-              artigosDuplicado = artigoLista = value;
-            else
-              artigoLista = null;
-            });
-            
-            }});
-    }
-    if (artigoLista == null) {
-      return Container(
-        child: Text(
-          "Nenhum Artigo encontrado. Sincronize os Dados",
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
-      );
-    } else if (artigoLista.length <= 0) {
-      return Column(
-        children: [CircularProgressIndicator(), Text("Aguarde")],
-        mainAxisAlignment: MainAxisAlignment.center,
-      );
-    } else {
-      return Scrollbar(
-        isAlwaysShown: false,
-        child: ListView.builder(
-          itemCount: artigoLista.length,
-          itemBuilder: (context, index) {
-            Artigo artigo = artigoLista[index];
-            url = baseUrl + artigo.artigo;
-
-            return new Container(
-              child: _ListaTile(
-                leading: GestureDetector(
-                    child: ClipOval(child: networkIconImage(url)),
-                    onTap: () async {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Center(child: Text(artigo.descricao)),
-                            // memory(artigos[index].imagemBuffer as Uint8List, width: 350, height: 250)
-                            content: 
-                            CachedNetworkImage(
-                              imageUrl: baseUrl + artigo.artigo,
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                            ),
-
-                            actions: <Widget>[
-                              IconButton(
-                                icon: new Icon(Icons.close),
-                                onPressed: () => Navigator.of(context).pop(),
-                              )
-                            ],
-                          );
-                        },
-                      );
-                    }),
-                title: Text(
-                  artigo.descricao,
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                ),
-                subtitle: Text(
-                  "Cod: " +
-                      artigo.artigo +
-                      ' ' +
-                      "Un: " +
-                      artigo.unidade +
-                      ', ' +
-                      "PVP: " +
-                      artigo.preco.toString() +
-                      ' MT',
-                  style: TextStyle(color: Colors.blue, fontSize: 14),
-                ),
-                data: artigo.descricao,
-              ),
-            );
-          },
-        ),
-      );
-    }
-  }
-
-  void opcaoAcao(String opcao) async {
+  
+ void opcaoAcao(String opcao) async {
     if (opcao == 'sincronizar') {
-      if (artigoLista != null && artigoLista.length > 0) {
-        setState(() {
-          artigoLista.clear();
-        });
-      }
-      SincronizarModelo(context, "artigo").then((value) async {
-        if (value) {
-          artigoLista = await getArtigos();
-        }
-      });
+      await SincronizarModelo(context,"artigo");
+      setState(() {});
+
     }
   }
+}
+
+List<Widget> children;
+
+Widget listarArtigo() {
+  if (artigos == null) {
+    // if ( carregado == false ) {
+    //   return Container(
+    //     child: CircularProgressIndicator(),
+    //   );
+    // }
+
+    return Container(child: Center(child: CircularProgressIndicator()));
+  } else if (artigos.length <= 0) {
+    return Container(
+      child: Text(
+        "Nenhum Artigo encontrado. Sincronize os Dados",
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      ),
+    );
+  } else {
+    return Scrollbar(
+      isAlwaysShown: true,
+      child: ListView.builder(
+        itemCount: artigos.length,
+        itemBuilder: (context, index) {
+          Artigo artigo = artigos[index];
+          return Container(
+            child: _ListaTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.blue,
+                child: Icon(
+                  Icons.local_offer,
+                  color: Colors.white,
+                ),
+              ),
+              title: Text(
+                artigo.descricao,
+                style:
+                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                "Cod: " +
+                    artigo.artigo +
+                    ' ' +
+                    "Un: " +
+                    artigo.unidade +
+                    ', ' +
+                    "PVP: " +
+                    artigo.preco.toString() +
+                    ' MT',
+                style: TextStyle(color: Colors.blue, fontSize: 14),
+              ),
+              data: artigo.descricao,
+            ),
+          );
+        },
+      ),
+    );
+  }
+  
 }
 
 class _ListaTile extends ListTile {
@@ -336,40 +253,26 @@ class _ListaTile extends ListTile {
   }
 }
 
-Future<List<Artigo>> getArtigos() async {
-  List<Artigo> res;
-  try {
-    res = await DBProvider.db.getTodosArtigos();
-  } catch (err) {
-    res = null;
-  }
+Future teste() async {
+  var res = await DBProvider.db.getTodosArtigos();
 
   return res;
 }
 
-class Opcoes {
+Future<List<Artigo>> getArtigos() async {
+  List<Artigo> res = await DBProvider.db.getTodosArtigos();
+
+  return res;
+}
+
+
+
+
+  class Opcoes {
   static const String Sincronizar = 'sincronizar';
 
   static const List<String> escolha = <String>[
     Sincronizar,
   ];
-}
 
-Widget networkIconImage(url) {
-  // Widget rv;
-  // try {
-  //   rv = CachedNetworkImage(
-  //     width: 45,
-  //     height: 45,
-  //     fit: BoxFit.cover,
-  //     imageUrl: url,
-  //     placeholder: (context, url) => CircularProgressIndicator(),
-  //     errorWidget: (context, url, error) => Icon(Icons.error),
-      
-  //   );
-  // } catch (err) {
-  //   rv = Icon(Icons.error);
-  // }
-
-  return Icon(Icons.error);
 }

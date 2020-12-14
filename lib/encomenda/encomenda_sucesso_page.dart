@@ -5,9 +5,7 @@ class EncomendaSucessoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return WillPopScope(
-            child:  Container(
+    return Container(
         color: Colors.blue[50],
         child: Container(
           child: Card(
@@ -22,7 +20,7 @@ class EncomendaSucessoPage extends StatelessWidget {
                   size: 200,
                 ),
                 Text(
-                  "Encomenda Criada",
+                  "Encomenda Processada",
                   style: TextStyle(
                     color: Colors.blue,
                     fontSize: 20,
@@ -39,15 +37,11 @@ class EncomendaSucessoPage extends StatelessWidget {
                   ),
                   onPressed: () {
                     Navigator.pushNamed(context, '/menu');
-                    
                   },
                 )
               ],
             ),
           ),
-        ))
-        ,
-            onWillPop: () async => false,
-          );
+        ));
   }
 }
